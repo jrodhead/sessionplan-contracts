@@ -5,7 +5,15 @@ All notable changes to `@sessionplan/contracts` are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 While in `0.x`, minor version bumps may include breaking changes.
 
-## [0.1.1] - Unreleased
+## [0.1.2] - Unreleased
+
+### Changed
+
+- Narrow `ProfileContext` and workspace training context contracts so generation
+  profile data contains visible narrative blocks, movement limitations, training
+  availability, and `trainingProgram.weeklyPlan` only.
+
+## [0.1.1]
 
 ### Changed
 

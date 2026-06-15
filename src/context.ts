@@ -10,8 +10,7 @@ import type {
   PhysicalProfile,
   ProfileNarrativeBlocks,
   MovementLimitation,
-  TrainingProgramConfig,
-  Sport,
+  PlannedSession,
 } from './profile.js';
 import type { ExerciseSummary } from './logs.js';
 import type { ReportKPI } from './reports.js';
@@ -25,6 +24,11 @@ export interface UserPreferences {
   maxSessionMinutes: number;
 }
 
+export interface GenerationTrainingProgramConfig {
+  /** What sessions make up a week, when the user has configured Training Availability. */
+  weeklyPlan?: PlannedSession[];
+}
+
 export interface ProfileContext {
   userId: string;
   displayName?: string;
@@ -33,18 +37,9 @@ export interface ProfileContext {
   narrativeBlocks: ProfileNarrativeBlocks;
   movementLimitations: MovementLimitation[];
   activeAggravatingPatternTags: string[];
-  injuries: string[];
-  experienceLevel: string;
-  goals: string | null;
   trainingDays: string[];
-  splitStructure: string | null;
-  priorityMuscleGroups: string[];
-  rpeTarget: [number, number];
-  trainingProgram: TrainingProgramConfig;
-  deloadFrequencyWeeks?: number;
+  trainingProgram?: GenerationTrainingProgramConfig;
   defaultLocationId: string | null;
-  sports: Sport[];
-  recoveryModalities: string[];
   preferences: UserPreferences;
 }
 
