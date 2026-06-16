@@ -5,7 +5,9 @@ All notable changes to `@sessionplan/contracts` are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 While in `0.x`, minor version bumps may include breaking changes.
 
-## [0.1.2] - Unreleased
+## [Unreleased]
+
+## [0.1.2] - 2026-06-15
 
 ### Changed
 
