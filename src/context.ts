@@ -9,7 +9,7 @@ import type { UnitSystem } from './common.js';
 import type {
   PhysicalProfile,
   ProfileNarrativeBlocks,
-  MovementLimitation,
+  MovementLimitationsContext,
   PlannedSession,
 } from './profile.js';
 import type { ExerciseSummary } from './logs.js';
@@ -35,8 +35,7 @@ export interface ProfileContext {
   unitSystem: UnitSystem;
   physical: PhysicalProfile;
   narrativeBlocks: ProfileNarrativeBlocks;
-  movementLimitations: MovementLimitation[];
-  activeAggravatingPatternTags: string[];
+  movementLimitationsContext?: MovementLimitationsContext;
   trainingDays: string[];
   trainingProgram?: GenerationTrainingProgramConfig;
   defaultLocationId: string | null;

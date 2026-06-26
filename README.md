@@ -58,7 +58,7 @@ builders, validators, and helpers stay in the API and its clients.
 ## Versioning
 
 While in `0.x`, minor versions may introduce breaking changes. Consumers pin an
-**exact** version (`"@sessionplan/contracts": "0.1.1"`). See the contracts release
+**exact** version (`"@sessionplan/contracts": "0.1.3"`). See the contracts release
 playbook in the SES-80 work item for the publish/upgrade flow.
 
 ## Development

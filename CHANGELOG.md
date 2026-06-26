@@ -7,6 +7,18 @@ While in `0.x`, minor version bumps may include breaking changes.
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-06-26
+
+### Added
+
+- `MovementLimitationsContext` prose contract for canonical movement-limitation profile context.
+- `ProfileContext.movementLimitationsContext` for generation and report consumers.
+
+### Changed
+
+- `ContractVersion` and package version bumped to `0.1.3`.
+- Structured `movementLimitations` and `activeAggravatingPatternTags` were removed from generation contracts in favor of prose context.
+
 ## [0.1.2] - 2026-06-15
 
 ### Changed

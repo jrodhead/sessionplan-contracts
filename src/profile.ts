@@ -76,35 +76,13 @@ export type ProfileNarrativeBlocks = Partial<Record<NarrativeBlockKey, Narrative
 // Movement Limitations
 // ============================================================================
 
-export type MovementLimitationRegion =
-  | 'shoulder'
-  | 'elbow'
-  | 'wrist'
-  | 'hip'
-  | 'knee'
-  | 'ankle'
-  | 'lower_back'
-  | 'neck'
-  | 'other';
+export type MovementLimitationsContextStatus = 'none' | 'active' | 'monitoring' | 'cleared';
 
-export type AggravatingPattern =
-  | 'overhead_press'
-  | 'deep_knee_flexion'
-  | 'spinal_loading'
-  | 'hinge_loading'
-  | 'running_impact'
-  | 'jumping'
-  | 'pulling'
-  | 'pushing'
-  | 'grip_loading';
-
-export type MovementLimitationStatus = 'active' | 'monitoring' | 'cleared';
-
-export interface MovementLimitation {
-  region: MovementLimitationRegion;
-  aggravating_patterns: AggravatingPattern[];
-  status: MovementLimitationStatus;
-  notes?: string;
+export interface MovementLimitationsContext {
+  text: string;
+  status: MovementLimitationsContextStatus;
+  written_at: string;
+  written_by: ProfileContextWrittenBy;
 }
 
 export interface ProfileContextEvent {
