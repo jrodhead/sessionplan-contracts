@@ -5,6 +5,9 @@
   "license": "UNLICENSED",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "engines": {
+    "node": "22.x"
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
