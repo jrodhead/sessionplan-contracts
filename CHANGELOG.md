@@ -7,6 +7,13 @@ While in `0.x`, minor version bumps may include breaking changes.
 
 ## [Unreleased]
 
+## [0.1.4] - 2026-06-26
+
+### Changed
+
+- `MovementLimitationsContext` is prose-only; the block-level `status` field was removed so multiple limitations can describe their own status in user-authored text.
+- `ContractVersion` and package version bumped to `0.1.4`.
+
 ## [0.1.3] - 2026-06-26
 
 ### Added

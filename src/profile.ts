@@ -76,11 +76,8 @@ export type ProfileNarrativeBlocks = Partial<Record<NarrativeBlockKey, Narrative
 // Movement Limitations
 // ============================================================================
 
-export type MovementLimitationsContextStatus = 'none' | 'active' | 'monitoring' | 'cleared';
-
 export interface MovementLimitationsContext {
   text: string;
-  status: MovementLimitationsContextStatus;
   written_at: string;
   written_by: ProfileContextWrittenBy;
 }
