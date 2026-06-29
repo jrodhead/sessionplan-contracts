@@ -7,6 +7,17 @@ While in `0.x`, minor version bumps may include breaking changes.
 
 ## [Unreleased]
 
+## [0.1.5] - 2026-06-29
+
+### Added
+
+- Recent session templates now include structured text blocks so generation consumers can preserve text-heavy session continuity.
+- `RecentSessionTextBlock` defines the supported heading, paragraph, bullet, step, and callout shapes used in generation context.
+
+### Changed
+
+- `ContractVersion` and package version bumped to `0.1.5`.
+
 ## [0.1.4] - 2026-06-26
 
 ### Changed

@@ -167,10 +167,18 @@ export interface RecentSessionTemplateItem {
   }> | null;
 }
 
+export type RecentSessionTextBlock =
+  | { type: 'heading'; level: 2 | 3; text: string }
+  | { type: 'paragraph'; text: string }
+  | { type: 'bullets'; items: string[] }
+  | { type: 'steps'; items: string[] }
+  | { type: 'callout'; tone: 'info' | 'caution' | 'success'; text: string };
+
 export interface RecentSessionTemplateSection {
   type: string;
   title: string;
   displayMode?: 'reference' | 'log' | null;
+  textBlocks?: RecentSessionTextBlock[];
   items: RecentSessionTemplateItem[];
 }
 

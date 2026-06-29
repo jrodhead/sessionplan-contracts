@@ -1,6 +1,6 @@
 {
   "name": "@sessionplan/contracts",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Shared TypeScript wire contracts for the SessionPlan API. Public for installation convenience; not a stable external contract until 1.0.",
   "license": "UNLICENSED",
   "main": "dist/index.js",
