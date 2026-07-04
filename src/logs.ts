@@ -3,6 +3,7 @@
  * the API assembles for AI report generation.
  */
 import type { UnitSystem } from './common.js';
+import type { LinkedSessionProvenance } from './public-catalogs.js';
 
 // ============================================================================
 // Core Performance Log Types (perf-2 format)
@@ -119,6 +120,7 @@ export interface PerformanceLogContent {
   sessionRpe?: number;
   painType?: 'none' | 'soreness' | 'acute';
   skippedSections?: string[];
+  linkedSessionProvenance?: LinkedSessionProvenance;
   device?: Record<string, unknown>;
   sections: PerformanceSection[];
   exerciseIndex?: Record<string, ExerciseSummary>;

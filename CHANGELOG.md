@@ -7,6 +7,18 @@ While in `0.x`, minor version bumps may include breaking changes.
 
 ## [Unreleased]
 
+## [0.1.6] - 2026-07-03
+
+### Added
+
+- Public catalog contracts for location session catalog resolve, option preview, authenticated instantiation, attribution, and linked-session provenance.
+- `PerformanceLogContent.linkedSessionProvenance` for server-issued provenance on logs attached to copied public catalog sessions.
+- `SessionWithScope.linked_session_provenance` for session responses that include copied public catalog provenance.
+
+### Changed
+
+- `ContractVersion` and package version bumped to `0.1.6`.
+
 ## [0.1.5] - 2026-06-29
 
 ### Added
