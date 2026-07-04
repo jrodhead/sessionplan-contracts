@@ -34,7 +34,7 @@ were built against.
 ```ts
 import { ContractVersion } from '@sessionplan/contracts';
 
-console.log(ContractVersion); // "0.1.1"
+console.log(ContractVersion); // "0.1.6"
 ```
 
 ## Scope
@@ -54,11 +54,12 @@ builders, validators, and helpers stay in the API and its clients.
 | `exercises`  | Exercise resolution and search responses                      |
 | `reports`    | Progress report content and list/detail responses             |
 | `health`     | `/health` diagnostics response                                |
+| `public-catalogs` | Public location session catalog responses and provenance |
 
 ## Versioning
 
 While in `0.x`, minor versions may introduce breaking changes. Consumers pin an
-**exact** version (`"@sessionplan/contracts": "0.1.4"`). See the contracts release
+**exact** version (`"@sessionplan/contracts": "0.1.6"`). See the contracts release
 playbook in the SES-80 work item for the publish/upgrade flow.
 
 ## Development

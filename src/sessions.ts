@@ -2,6 +2,7 @@
  * Session create/update requests and responses.
  */
 import type { JsonValue, SessionScope, PaginationParams, PaginationMeta } from './common.js';
+import type { LinkedSessionProvenance } from './public-catalogs.js';
 
 export interface SessionListParams extends PaginationParams {
   search?: string;
@@ -60,6 +61,7 @@ export interface SessionWithScope {
   content: JsonValue;
   source: string;
   location_id: string | null;
+  linked_session_provenance?: LinkedSessionProvenance | null;
   scheduled_for: string | null;
   team_id: string | null;
   scope: SessionScope;
