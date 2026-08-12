@@ -160,10 +160,18 @@ export interface RecentSessionTemplateItem {
   name: string;
   link?: string | null;
   prescription?: CompactPrescription | null;
+  /**
+   * Item-level notes, retained so a substituted exercise is visible as a
+   * substitution rather than as a one-off entry for a new exercise plus an
+   * unexplained gap in the original's streak. Bounded and present only for
+   * items that actually carry notes.
+   */
+  notes?: string | null;
   children?: Array<{
     name: string;
     link?: string | null;
     prescription?: CompactPrescription | null;
+    notes?: string | null;
   }> | null;
 }
 
