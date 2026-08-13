@@ -7,6 +7,16 @@ While in `0.x`, minor version bumps may include breaking changes.
 
 ## [Unreleased]
 
+## [0.1.7] - 2026-08-12
+
+### Added
+
+- `RecentSessionTemplateItem.notes` and `RecentSessionTemplateItem.children[].notes` — bounded item-level notes in recent-session templates, so generation can see that an exercise was substituted rather than reading it as a new exercise with no history.
+
+### Changed
+
+- `ContractVersion` and package version bumped to `0.1.7`.
+
 ## [0.1.6] - 2026-07-03
 
 ### Added

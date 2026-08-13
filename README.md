@@ -34,7 +34,7 @@ were built against.
 ```ts
 import { ContractVersion } from '@sessionplan/contracts';
 
-console.log(ContractVersion); // "0.1.6"
+console.log(ContractVersion); // "0.1.7"
 ```
 
 ## Scope
@@ -59,8 +59,11 @@ builders, validators, and helpers stay in the API and its clients.
 ## Versioning
 
 While in `0.x`, minor versions may introduce breaking changes. Consumers pin an
-**exact** version (`"@sessionplan/contracts": "0.1.6"`). See the contracts release
-playbook in the SES-80 work item for the publish/upgrade flow.
+**exact** version (`"@sessionplan/contracts": "0.1.7"`).
+
+**To publish a release or bump a consumer, see [`docs/runbook.md`](docs/runbook.md).**
+It covers the publish flow (tag-triggered and manual), consumer update ordering,
+breaking-change rules, and what to do about a bad published version.
 
 ## Development
 

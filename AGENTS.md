@@ -5,6 +5,7 @@ Shared TypeScript wire types for SessionPlan API consumers. Touch this repo when
 ## First Context
 
 - Read `README.md` for package scope, versioning, and development commands.
+- Read `docs/runbook.md` before publishing, bumping a consumer pin, or making a breaking change.
 - Read `../sessionplan-business/product-design/agentic-workspace.md` for cross-repo workflow.
 - Read affected producer/consumer `AGENTS.md` files before changing types.
 
@@ -32,6 +33,8 @@ npm run build
 ```
 
 Run `npm run build` when declaration output, package publishing, or consumer updates are part of the task.
+
+Publishing is **not** `npm run build` — see `docs/runbook.md` for the release flow. Publish before updating consumer pins; a consumer can never pin a version that is not on npm yet.
 
 ## Cross-Repo Awareness
 
