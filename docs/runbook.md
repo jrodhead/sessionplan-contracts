@@ -74,10 +74,18 @@ git push origin v0.1.7
 
 Watch it: `gh run list --repo jrodhead/sessionplan-contracts`
 
-> ⚠️ **This path is untested as of August 2026.** The repo has no tags and the
-> workflow has no run history, yet `0.1.1`–`0.1.6` are all on npm — every release
-> so far was published manually. Expect to fall back below if the tag push does
-> nothing, and update this note once the workflow has succeeded once.
+> ⚠️ **This path currently fails.** First exercised on 2026-08-13 for `v0.1.7`
+> ([run 31658441239](https://github.com/jrodhead/sessionplan-contracts/actions/runs/31658441239)).
+> It built and packed correctly, then died at the final step:
+>
+> ```
+> npm error code EOTP
+> npm error This operation requires a one-time password from your authenticator.
+> ```
+>
+> The npm account requires 2FA for publishes, and CI cannot answer an OTP prompt.
+> Until [the fix below](#fixing-the-automated-publish) is applied, **use the
+> manual path**. `0.1.1`–`0.1.7` were all published manually.
 
 ### Manual (fallback, and how every release to date was made)
 
@@ -85,7 +93,17 @@ Watch it: `gh run list --repo jrodhead/sessionplan-contracts`
 npm login                # npm sessions expire; check with `npm whoami` first
 npm run typecheck && npm test
 npm publish              # prepublishOnly runs clean + build automatically
+                         # 2FA is enforced — expect an OTP prompt, or pass --otp=<code>
 ```
+
+Tag the release afterwards so the repo still records what shipped:
+
+```bash
+git tag v0.1.7 && git push origin v0.1.7
+```
+
+(The tag will trigger the workflow, which will fail at the publish step because
+the version already exists. Harmless, but noisy — another reason to fix it.)
 
 `package.json` sets `publishConfig.access: public` and ships only `dist/`, so no
 extra flags are needed. Do **not** run `npm run build` and then hand-edit `dist/`
@@ -93,8 +111,29 @@ extra flags are needed. Do **not** run `npm run build` and then hand-edit `dist/
 
 ### Prerequisites
 
-- npm account with publish rights on the `@sessionplan` scope (manual path only).
-- `NPM_TOKEN` secret on the GitHub repo (automated path only — already configured).
+- npm account with publish rights on the `@sessionplan` scope, plus your 2FA
+  authenticator (manual path).
+- `NPM_TOKEN` secret on the GitHub repo (automated path — configured, but see
+  the EOTP failure above).
+
+### Fixing the automated publish
+
+The workflow is otherwise correct — it fails only because the stored credential
+cannot satisfy npm's 2FA requirement. Three ways out, cheapest first:
+
+1. **Use an npm automation token.** Automation tokens are designed for CI and
+   are exempt from the 2FA prompt, unlike classic/publish tokens. Generate one
+   on npmjs.com and replace the secret:
+   `gh secret set NPM_TOKEN --repo jrodhead/sessionplan-contracts`
+2. **Set up npm Trusted Publishing (OIDC).** Probably the original intent — the
+   workflow already requests `permissions: id-token: write`, which is only
+   needed for OIDC. Configure the package on npmjs.com to trust this repo and
+   workflow, and no long-lived token is needed at all.
+3. **Relax the package's 2FA setting** to allow automation tokens for writes.
+   Weakest option; prefer 1 or 2.
+
+Verify with a throwaway patch release, or by re-running the failed job after the
+credential changes. Update the warning above once it succeeds.
 
 ---
 
@@ -188,13 +227,23 @@ manual path — the workflow uses `NPM_TOKEN`.
 git tag -d v0.1.7 && git push origin :refs/tags/v0.1.7
 ```
 
-### 3. Tag pushed but nothing published
+### 3. Publish workflow fails with `EOTP`
 
-**Cause**: the workflow has never run successfully (see the warning above) — the
-tag may not be triggering it at all.
+**Cause**: the npm account requires a 2FA one-time password for publishes, and
+CI cannot provide one. This is the current known state — see
+[Fixing the automated publish](#fixing-the-automated-publish).
 
-**Resolution**: check `gh run list --repo jrodhead/sessionplan-contracts`. If
-there is no run, publish manually and investigate the workflow separately.
+**Resolution**: publish manually for now (`npm publish`, answer the OTP prompt),
+then fix the credential so future releases work unattended.
+
+### 3b. Tag pushed but nothing published, and no workflow run
+
+**Cause**: the tag did not match the `v*` trigger, or was created locally and
+never pushed.
+
+**Resolution**: `git ls-remote --tags git@github.com:jrodhead/sessionplan-contracts.git`
+to confirm the tag reached the remote, then
+`gh run list --repo jrodhead/sessionplan-contracts`.
 
 ### 4. Consumer typechecks locally but fails in CI
 
