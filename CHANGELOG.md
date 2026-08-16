@@ -7,6 +7,16 @@ While in `0.x`, minor version bumps may include breaking changes.
 
 ## [Unreleased]
 
+## [0.1.8] - 2026-08-16
+
+### Added
+
+- `PossibleDuplicate` and `ExerciseWithScope.possible_duplicate` — an optional, non-blocking warning returned by `POST /api/exercises` when a new exercise closely matches an existing one. Advisory by design: legitimately distinct exercises (a machine and a free-weight version of one movement) match the check, so it must never be treated as a rejection. Additive and optional; consumers that ignore it are unaffected.
+
+### Changed
+
+- `ContractVersion` and package version bumped to `0.1.8`.
+
 ## [0.1.7] - 2026-08-12
 
 ### Added

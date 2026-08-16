@@ -118,4 +118,19 @@ export interface ExerciseWithScope {
   created_by: string | null;
   created_at: string;
   updated_at: string;
+  /**
+   * Non-blocking warning on create: the new exercise closely matches one that
+   * already exists. The create still succeeded — confirm with the user rather than
+   * treating this as an error, since legitimately distinct exercises (a machine and
+   * a free-weight version of one movement) match by design.
+   */
+  possible_duplicate?: PossibleDuplicate;
+}
+
+/** A near-match found at create time. Advisory only. */
+export interface PossibleDuplicate {
+  /** Slug of the existing exercise that matched. */
+  matchedSlug: string;
+  /** Which rule matched: exact slug, normalized name, or fuzzy slug distance. */
+  reason: string;
 }
