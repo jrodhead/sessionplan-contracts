@@ -7,7 +7,11 @@ While in `0.x`, minor version bumps may include breaking changes.
 
 ## [Unreleased]
 
-## [0.1.8] - 2026-08-16
+## [0.1.9] - 2026-09-07
+
+### Added
+
+- `RecentSessionTemplate.completion.notes` — the session-level note the user wrote when logging, carried into generation context alongside the other completion signals. Previously the bundle reported what happened in a session (`completionStatus`, `sessionRpe`, `skippedSections`, set-level data) but never why, so a deliberate load change was indistinguishable from a regression. Additive and optional; consumers that ignore it are unaffected. See SES-275.
 
 ### Added
 

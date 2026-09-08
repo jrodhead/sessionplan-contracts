@@ -207,6 +207,13 @@ export interface RecentSessionTemplate {
     sessionRpe?: number;
     painType?: 'none' | 'soreness' | 'acute';
     skippedSections?: string[];
+    /**
+     * Session-level note the user wrote when logging. Free text: a deliberate
+     * load or technique change, a substitution, a time constraint, how it felt.
+     * Often the only record of *why* something deviated — structural signals
+     * report what happened, not the reason.
+     */
+    notes?: string;
   };
   sections: RecentSessionTemplateSection[];
 }
