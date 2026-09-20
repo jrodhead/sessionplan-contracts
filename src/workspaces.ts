@@ -8,11 +8,34 @@ import type { WorkspaceRole, TeamRole } from './common.js';
 // ============================================================================
 
 /**
+ * Safety postures a workspace may select for its coaching agent.
+ *
+ * A closed vocabulary, deliberately. The selected value becomes authoritative to the
+ * model — server instructions tell it that a workspace's instruction field is policy —
+ * so accepting authored text here would make workspace configuration a channel for
+ * supplying arbitrary instruction. That matters once workspaces are customer-created,
+ * and more so where one workspace is shared across many members. The workspace picks;
+ * the server renders the text.
+ */
+export type WorkspaceSafetyProfile = 'strength' | 'breath';
+
+export const WORKSPACE_SAFETY_PROFILES: readonly WorkspaceSafetyProfile[] = [
+  'strength',
+  'breath',
+] as const;
+
+/**
  * Known workspace settings keys; additional keys allowed for extensibility.
  */
 export interface WorkspaceSettings {
   autoJoinNewUsers?: boolean;
   autoJoinRole?: 'member' | 'admin';
+  /**
+   * The workspace's agent safety posture. Absent means the default posture: a
+   * workspace that has never been configured must behave exactly as it did before
+   * this field existed, never erroring and never yielding an empty instruction.
+   */
+  safetyProfile?: WorkspaceSafetyProfile;
   [key: string]: unknown;
 }
 

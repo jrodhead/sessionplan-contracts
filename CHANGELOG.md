@@ -7,6 +7,16 @@ While in `0.x`, minor version bumps may include breaking changes.
 
 ## [Unreleased]
 
+## [0.1.10] - 2026-09-20
+
+### Added
+
+- `WorkspaceSafetyProfile` and `WORKSPACE_SAFETY_PROFILES`, plus an optional `safetyProfile` on `WorkspaceSettings`. A workspace selects a safety posture from a closed set and the server renders the instruction text; the workspace never supplies text of its own. Absent means the default posture, so existing workspaces are unaffected. Additive — `WorkspaceSettings` already carried an index signature, so no consumer breaks (SES-276).
+
+### Changed
+
+- `ContractVersion` and package version bumped to `0.1.10`.
+
 ## [0.1.9] - 2026-09-07
 
 ### Added
