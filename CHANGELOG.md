@@ -7,6 +7,17 @@ While in `0.x`, minor version bumps may include breaking changes.
 
 ## [Unreleased]
 
+## [0.1.11] - 2026-09-29
+
+### Added
+
+- **Exercise taxonomy vocabularies as one published source.** `TRAINING_TYPES`, `MODALITIES`, `MOVEMENT_PATTERNS`, `MUSCLES`, `EXERCISE_LEVELS` and `LOG_TYPES_BY_TRAINING_TYPE`, with their types, plus optional classification fields on the exercise request, response and list shapes (exercise-taxonomy-by-training-type).
+- **This week's conditioning reaches the AI.** Optional `conditioning` and `completion` on `SameWeekSession`. Additive; consumers that ignore them are unaffected.
+
+### Changed
+
+- `ContractVersion` and package version bumped to `0.1.11`.
+
 ## [0.1.10] - 2026-09-20
 
 ### Added

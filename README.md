@@ -27,9 +27,12 @@ import type {
 } from '@sessionplan/contracts';
 ```
 
-The package is **type-only** apart from a single runtime export, `ContractVersion`,
-which mirrors the package version so clients can report the contract revision they
-were built against.
+Besides types, the package has two kinds of runtime export: `ContractVersion`, which
+mirrors the package version so clients can report the contract revision they were
+built against, and **closed vocabularies** as frozen `const` arrays
+(`WORKSPACE_SAFETY_PROFILES`, `TRAINING_TYPES`, `MODALITIES`, `MOVEMENT_PATTERNS`,
+`MUSCLES`, `EXERCISE_LEVELS`, `LOG_TYPES_BY_TRAINING_TYPE`), so every service reads
+the same list of allowed values.
 
 ```ts
 import { ContractVersion } from '@sessionplan/contracts';
@@ -40,8 +43,9 @@ console.log(ContractVersion); // "0.1.7"
 ## Scope
 
 This package is the single source of truth for the API wire contract. It contains
-**only** `interface` / `type` declarations (plus `ContractVersion`). Runtime
-builders, validators, and helpers stay in the API and its clients.
+`interface` / `type` declarations, `ContractVersion`, and closed-vocabulary `const`
+arrays — data, never logic. Runtime builders, validators, and helpers stay in the
+API and its clients.
 
 | Module       | Covers                                                        |
 | ------------ | ------------------------------------------------------------- |

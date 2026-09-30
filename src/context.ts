@@ -139,7 +139,31 @@ export interface SameWeekSession {
   exercises: string[];
   /** Per-exercise set counts extracted from prescription (key = exercise name). */
   exerciseSets?: Record<string, number>;
+  /**
+   * This session's conditioning items, as prescribed. Weekly muscle volume counts
+   * strength only, so this is where the week's conditioning load reaches the AI.
+   * An item counts when its library exercise is `conditioning`, or when its own
+   * log type is `conditioning` or `endurance` — so unlinked custom items such as
+   * "Outdoor Run" are included. Absent when the session has none.
+   */
+  conditioning?: SameWeekConditioningItem[];
+  /** How the session was logged. Absent when it has not been logged. */
+  completion?: SameWeekCompletion;
 }
+
+export interface SameWeekConditioningItem {
+  name: string;
+  logType: Extract<DefaultLogType, 'conditioning' | 'endurance' | 'carry'>;
+  prescription: Pick<
+    CompactPrescription,
+    'sets' | 'rpe' | 'timeSeconds' | 'distanceMeters' | 'distanceMiles' | 'restSeconds'
+  >;
+}
+
+export type SameWeekCompletion = Pick<
+  NonNullable<RecentSessionTemplate['completion']>,
+  'status' | 'completionStatus' | 'sessionRpe' | 'painType'
+>;
 
 export interface CompactPrescription {
   sets?: number | null;

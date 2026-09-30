@@ -1,8 +1,9 @@
 /**
  * @sessionplan/contracts
  *
- * Shared TypeScript wire contracts for the SessionPlan API. Type-only except for
- * the `ContractVersion` constant below.
+ * Shared TypeScript wire contracts for the SessionPlan API. Types, the
+ * `ContractVersion` constant below, and closed-vocabulary `const` arrays — data,
+ * never logic.
  *
  * Public for installation convenience; not a stable external contract until 1.0.
  */
@@ -22,4 +23,4 @@ export * from './public-catalogs.js';
  * The contract revision this build was published at. Mirrors package.json
  * version so clients can report the contract they were compiled against.
  */
-export const ContractVersion = '0.1.10';
+export const ContractVersion = '0.1.11';

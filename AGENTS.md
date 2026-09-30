@@ -11,7 +11,7 @@ Shared TypeScript wire types for SessionPlan API consumers. Touch this repo when
 
 ## Key Constraints
 
-- This package is type-only apart from `ContractVersion`.
+- This package holds types, `ContractVersion`, and closed-vocabulary `const` arrays (data, never logic).
 - Runtime builders, validators, and service helpers stay in producer/consumer repos.
 - Consumers pin exact versions. Any changed existing shape requires coordinated producer and consumer updates.
 - Additive optional fields are the safest compatibility path, but still require versioning and consumer awareness.
