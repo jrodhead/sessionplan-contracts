@@ -7,6 +7,18 @@ While in `0.x`, minor version bumps may include breaking changes.
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-02
+
+### Changed
+
+- **The muscle vocabulary names what a lifter trains, and no value contains another.** `back`, `shoulders` and `core` are replaced by `lats`, `upper-back`, `side-delts`, and the existing `abs`/`obliques`/`lower-back`; `neck`, `abductors`, `tibialis` and `feet-ankles` are added (23 values). **Breaking:** the three removed values no longer validate.
+- `ContractVersion` and package version bumped to `0.2.0`.
+
+### Added
+
+- **`MUSCLE_LABELS` and `MUSCLE_GROUPS`** give each muscle its display label and its body region, for grouped filters.
+- **Weekly volume separates direct from indirect work.** Optional `directSets` (primary muscle) and `indirectSets` (secondary) on `WeeklyMuscleVolume`; `sets` keeps its meaning.
+
 ## [0.1.11] - 2026-09-29
 
 ### Added

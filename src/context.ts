@@ -303,8 +303,13 @@ export interface ExerciseIndex {
 /** Per-muscle-group weekly set count. */
 export interface WeeklyMuscleVolume {
   muscle: string;
+  /** All sets that touched this muscle: direct + indirect (unchanged meaning). */
   sets: number;
   sessions: number;
+  /** Sets from exercises where this is a primary muscle — the work aimed at it. */
+  directSets?: number;
+  /** Sets from exercises where this is a secondary muscle — assisting work. */
+  indirectSets?: number;
 }
 
 // ============================================================================

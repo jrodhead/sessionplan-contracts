@@ -82,49 +82,113 @@ export const MOVEMENT_PATTERNS: readonly MovementPattern[] = [
   'anti-lateral-flexion',
 ] as const;
 
-/** Values for `primary_muscles` and `secondary_muscles`. */
+/**
+ * Values for `primary_muscles` and `secondary_muscles`: what a lifter would say they
+ * trained. Some are muscles (biceps, lats), some are areas (upper back, neck) — the
+ * mix is deliberate. The rule that keeps the data clear: **no value contains
+ * another**, so a set is never counted twice. That is why there is no "back",
+ * "shoulders" or "core": their parts are listed instead.
+ *
+ * Boundaries (also in the classification guide and the MCP search description):
+ * traps = shrugging (upper traps); upper-back = pulling the shoulder blades back
+ * (rhomboids, mid/lower traps — rows, face pulls); abs = trunk flexion and
+ * anti-extension; obliques = rotation, anti-rotation, side bending; lower-back =
+ * spinal extension; abductors = moving the leg out (glute med/min); tibialis =
+ * lifting the toes; feet-ankles = foot muscles and ankle stabilisers only (calf
+ * raises stay calves, toe raises stay tibialis).
+ */
 export type Muscle =
   | 'chest'
-  | 'back'
-  | 'shoulders'
-  | 'front-delts'
-  | 'rear-delts'
+  | 'lats'
+  | 'upper-back'
   | 'traps'
+  | 'neck'
+  | 'front-delts'
+  | 'side-delts'
+  | 'rear-delts'
   | 'biceps'
   | 'triceps'
   | 'forearms'
-  | 'quads'
-  | 'hamstrings'
-  | 'glutes'
-  | 'adductors'
-  | 'calves'
-  | 'core'
   | 'abs'
   | 'obliques'
   | 'lower-back'
-  | 'hip-flexors';
+  | 'glutes'
+  | 'abductors'
+  | 'adductors'
+  | 'hip-flexors'
+  | 'quads'
+  | 'hamstrings'
+  | 'calves'
+  | 'tibialis'
+  | 'feet-ankles';
 
 export const MUSCLES: readonly Muscle[] = [
   'chest',
-  'back',
-  'shoulders',
-  'front-delts',
-  'rear-delts',
+  'lats',
+  'upper-back',
   'traps',
+  'neck',
+  'front-delts',
+  'side-delts',
+  'rear-delts',
   'biceps',
   'triceps',
   'forearms',
-  'quads',
-  'hamstrings',
-  'glutes',
-  'adductors',
-  'calves',
-  'core',
   'abs',
   'obliques',
   'lower-back',
+  'glutes',
+  'abductors',
+  'adductors',
   'hip-flexors',
+  'quads',
+  'hamstrings',
+  'calves',
+  'tibialis',
+  'feet-ankles',
 ] as const;
+
+/** What a person sees for each muscle value. Stored values are never shown raw. */
+export const MUSCLE_LABELS: Readonly<Record<Muscle, string>> = {
+  chest: 'Chest',
+  lats: 'Lats',
+  'upper-back': 'Upper back',
+  traps: 'Traps',
+  neck: 'Neck',
+  'front-delts': 'Front delts',
+  'side-delts': 'Side delts',
+  'rear-delts': 'Rear delts',
+  biceps: 'Biceps',
+  triceps: 'Triceps',
+  forearms: 'Forearms & grip',
+  abs: 'Abs',
+  obliques: 'Obliques',
+  'lower-back': 'Lower back',
+  glutes: 'Glutes',
+  abductors: 'Abductors (outer hip)',
+  adductors: 'Adductors (inner thigh)',
+  'hip-flexors': 'Hip flexors',
+  quads: 'Quads',
+  hamstrings: 'Hamstrings',
+  calves: 'Calves',
+  tibialis: 'Shins (tibialis)',
+  'feet-ankles': 'Feet & ankles',
+};
+
+/**
+ * Body regions for grouping the muscle filter, in display order. A region is a way
+ * to filter ("All shoulders"), never a value an exercise is tagged with. Lower back
+ * sits under Core so "All back" returns pulling work, not trunk extension.
+ */
+export const MUSCLE_GROUPS: ReadonlyArray<{ label: string; muscles: readonly Muscle[] }> = [
+  { label: 'Chest', muscles: ['chest'] },
+  { label: 'Back & neck', muscles: ['lats', 'upper-back', 'traps', 'neck'] },
+  { label: 'Shoulders', muscles: ['front-delts', 'side-delts', 'rear-delts'] },
+  { label: 'Arms', muscles: ['biceps', 'triceps', 'forearms'] },
+  { label: 'Core', muscles: ['abs', 'obliques', 'lower-back'] },
+  { label: 'Hips & legs', muscles: ['glutes', 'abductors', 'adductors', 'hip-flexors', 'quads', 'hamstrings'] },
+  { label: 'Lower leg', muscles: ['calves', 'tibialis', 'feet-ankles'] },
+];
 
 export type ExerciseLevel = 'beginner' | 'intermediate' | 'advanced';
 
