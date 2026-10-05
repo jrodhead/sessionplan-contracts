@@ -16,6 +16,7 @@ import {
   MUSCLE_LABELS,
   MUSCLE_GROUPS,
   EXERCISE_LEVELS,
+  EXERCISE_TAGS,
   LOG_TYPES_BY_TRAINING_TYPE,
 } from '../src/index.js';
 import type { SameWeekSession } from '../src/index.js';
@@ -83,6 +84,18 @@ describe('exercise taxonomy vocabularies', () => {
     ]);
   });
 
+  it('EXERCISE_TAGS is the closed topical list, with nothing another field carries', () => {
+    expect([...EXERCISE_TAGS]).toEqual([
+      'compound', 'isolation', 'unilateral', 'isometric', 'eccentric', 'plyometric', 'explosive',
+      'yoga', 'yin-yoga', 'activation', 'balance', 'low-impact', 'rehab', 'relaxation',
+    ]);
+    const others: readonly string[] = [...TRAINING_TYPES, ...MUSCLES, ...MOVEMENT_PATTERNS, ...MODALITIES];
+    for (const tag of EXERCISE_TAGS) expect(others).not.toContain(tag);
+    for (const redundant of ['upper-body', 'lower-body', 'full-body', 'bodyweight', 'warm-up', 'cooldown', 'cardio']) {
+      expect(EXERCISE_TAGS as readonly string[]).not.toContain(redundant);
+    }
+  });
+
   it('EXERCISE_LEVELS is exactly the three levels', () => {
     expect([...EXERCISE_LEVELS]).toEqual(['beginner', 'intermediate', 'advanced']);
   });
@@ -98,7 +111,7 @@ describe('exercise taxonomy vocabularies', () => {
 
   it('every training type has an entry, and no vocabulary repeats a value', () => {
     expect(Object.keys(LOG_TYPES_BY_TRAINING_TYPE).sort()).toEqual([...TRAINING_TYPES].sort());
-    for (const list of [TRAINING_TYPES, MODALITIES, MOVEMENT_PATTERNS, MUSCLES, EXERCISE_LEVELS]) {
+    for (const list of [TRAINING_TYPES, MODALITIES, MOVEMENT_PATTERNS, MUSCLES, EXERCISE_LEVELS, EXERCISE_TAGS]) {
       expect(new Set(list).size).toBe(list.length);
     }
   });

@@ -7,6 +7,16 @@ While in `0.x`, minor version bumps may include breaking changes.
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-10-05
+
+### Added
+
+- **`EXERCISE_TAGS`, the closed list of exercise tags.** Topical labels only: nothing the training type, muscles, equipment or prescription already says.
+
+### Changed
+
+- `ContractVersion` and package version bumped to `0.2.1`.
+
 ## [0.2.0] - 2026-10-02
 
 ### Changed

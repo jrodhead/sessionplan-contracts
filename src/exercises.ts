@@ -190,6 +190,49 @@ export const MUSCLE_GROUPS: ReadonlyArray<{ label: string; muscles: readonly Mus
   { label: 'Lower leg', muscles: ['calves', 'tibialis', 'feet-ankles'] },
 ];
 
+/**
+ * Values for `tags`: topical labels no other field carries. The type is `training_type`,
+ * muscles and body region come from the muscle fields, equipment from `equipment`, and a
+ * goal (hypertrophy, zone 2) belongs in the prescription, so none of those are tags.
+ *
+ * - Modifiers: how the exercise is performed. `unilateral`, `isometric` and `plyometric`
+ *   are read by the app (swap picker, logger).
+ * - Style: `yoga`, `yin-yoga`.
+ * - Purpose: `activation`, `balance`, `low-impact`, `rehab`, `relaxation`.
+ */
+export type ExerciseTag =
+  | 'compound'
+  | 'isolation'
+  | 'unilateral'
+  | 'isometric'
+  | 'eccentric'
+  | 'plyometric'
+  | 'explosive'
+  | 'yoga'
+  | 'yin-yoga'
+  | 'activation'
+  | 'balance'
+  | 'low-impact'
+  | 'rehab'
+  | 'relaxation';
+
+export const EXERCISE_TAGS: readonly ExerciseTag[] = [
+  'compound',
+  'isolation',
+  'unilateral',
+  'isometric',
+  'eccentric',
+  'plyometric',
+  'explosive',
+  'yoga',
+  'yin-yoga',
+  'activation',
+  'balance',
+  'low-impact',
+  'rehab',
+  'relaxation',
+] as const;
+
 export type ExerciseLevel = 'beginner' | 'intermediate' | 'advanced';
 
 export const EXERCISE_LEVELS: readonly ExerciseLevel[] = [
