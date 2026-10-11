@@ -7,6 +7,16 @@ While in `0.x`, minor version bumps may include breaking changes.
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-10-11
+
+### Added
+
+- **Every listed session says whether it is the caller's own.** `SessionListItem` adds a required `is_mine` to `SessionWithScope`, and `SessionListResponse.sessions` uses it. `SessionListParams` gains `mine`, for sessions owned by the caller plus ones shared with their teams.
+
+### Changed
+
+- `ContractVersion` and package version bumped to `0.3.0`. Readers of the list response are unaffected; test fixtures that build one need `is_mine`.
+
 ## [0.2.1] - 2026-10-05
 
 ### Added

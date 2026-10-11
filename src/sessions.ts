@@ -14,6 +14,8 @@ export interface SessionListParams extends PaginationParams {
   location_id?: string;
   team_id?: string;
   scope?: SessionScope;
+  /** Only sessions for the caller: ones they own, whatever the scope, plus ones shared with their teams. */
+  mine?: boolean;
   sort?: 'created_at' | 'scheduled_for' | 'title';
   order?: 'asc' | 'desc';
   block?: number;
@@ -83,8 +85,14 @@ export interface SessionMutationResponse extends SessionWithScope {
   location_assignment_source?: string | null;
 }
 
+/**
+ * A session as listed. `is_mine` is true when the caller owns it; public-catalog
+ * source sessions are never anyone's own.
+ */
+export type SessionListItem = SessionWithScope & { is_mine: boolean };
+
 /** List sessions response. */
 export interface SessionListResponse {
-  sessions: SessionWithScope[];
+  sessions: SessionListItem[];
   pagination: PaginationMeta;
 }
