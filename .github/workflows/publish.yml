@@ -19,7 +19,7 @@ jobs:
           node-version: "22"
           registry-url: "https://registry.npmjs.org"
 
-      # Trusted publishing (OIDC) needs npm 11.5.1 or later; Node 22 ships npm 10.
+      # Trusted publishing and `npm stage` need a current npm; Node 22 ships npm 10.
       - name: Update npm
         run: npm install -g npm@latest
 
@@ -38,9 +38,12 @@ jobs:
       - name: Build
         run: npm run build
 
-      # Trusted publishing: npm exchanges this run's GitHub OIDC token (id-token:
-      # write, above) for a short-lived publish token. No stored secret, and npm
-      # adds a provenance attestation because the repo is public. The trusted
-      # publisher on npmjs.com names this repo and this file (publish.yml).
-      - name: Publish to npm
-        run: npm publish --access public
+      # Trusted publishing, staged: npm exchanges this run's GitHub OIDC token
+      # (id-token: write, above) for a short-lived token that can only *stage* a
+      # version. Nothing is released until the owner approves the staged version
+      # on npmjs.com with 2FA. No stored secret; npm adds a provenance
+      # attestation because the repo is public. The trusted publisher on
+      # npmjs.com names this repo and this file (publish.yml), with direct
+      # publish and dist-tag management left off.
+      - name: Stage for publishing
+        run: npm stage publish . --access public

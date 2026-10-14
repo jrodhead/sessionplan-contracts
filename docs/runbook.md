@@ -63,10 +63,15 @@ build. See `AGENTS.md` for the cross-repo constraints.
 ### Automated (preferred)
 
 `.github/workflows/publish.yml` fires on a pushed `v*` tag. It verifies the tag
-matches `package.json`, runs `npm ci`, builds, and publishes with **npm trusted
-publishing (OIDC)**: npm exchanges the run's GitHub OIDC token for a short-lived
-publish token. There is no stored secret, nothing answers a 2FA prompt, and npm
+matches `package.json`, runs `npm ci`, builds, and **stages** the version with
+npm trusted publishing (OIDC): npm exchanges the run's GitHub OIDC token for a
+short-lived token that can only stage. There is no stored secret, and npm
 attaches a provenance attestation (the repo is public).
+
+**A staged version is not released until you approve it** on npmjs.com (the
+package's staged versions, or `npm stage list` / `npm stage approve <id>`),
+which asks for your 2FA. This works from a phone. Someone who can push a tag
+can stage a version but cannot release one.
 
 ```bash
 git checkout main && git pull
@@ -78,7 +83,8 @@ Watch it: `gh run list --repo jrodhead/sessionplan-contracts`
 
 The trusted publisher is configured on npmjs.com (package → Settings → Trusted
 Publisher → GitHub Actions): user `jrodhead`, repository `sessionplan-contracts`,
-workflow `publish.yml`, no environment. Renaming the workflow file or the repo
+workflow `publish.yml`, no environment, and "publish directly / manage
+dist-tags" left **off** (staged publishing only). Renaming the workflow file or the repo
 breaks publishing until that entry is updated. Switched from the `NPM_TOKEN`
 secret on 2026-10-14 (SES-306), after the token path failed with `EOTP` for
 every release since `v0.1.7`.
