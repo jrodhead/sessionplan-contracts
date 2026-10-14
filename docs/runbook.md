@@ -63,31 +63,27 @@ build. See `AGENTS.md` for the cross-repo constraints.
 ### Automated (preferred)
 
 `.github/workflows/publish.yml` fires on a pushed `v*` tag. It verifies the tag
-matches `package.json`, runs `npm ci`, builds, and publishes with the repo's
-`NPM_TOKEN` secret.
+matches `package.json`, runs `npm ci`, builds, and publishes with **npm trusted
+publishing (OIDC)**: npm exchanges the run's GitHub OIDC token for a short-lived
+publish token. There is no stored secret, nothing answers a 2FA prompt, and npm
+attaches a provenance attestation (the repo is public).
 
 ```bash
 git checkout main && git pull
-git tag v0.1.7          # must match package.json exactly, minus the leading v
-git push origin v0.1.7
+git tag v0.4.0          # must match package.json exactly, minus the leading v
+git push origin v0.4.0
 ```
 
 Watch it: `gh run list --repo jrodhead/sessionplan-contracts`
 
-> ⚠️ **This path currently fails.** First exercised on 2026-08-13 for `v0.1.7`
-> ([run 31658441239](https://github.com/jrodhead/sessionplan-contracts/actions/runs/31658441239)).
-> It built and packed correctly, then died at the final step:
->
-> ```
-> npm error code EOTP
-> npm error This operation requires a one-time password from your authenticator.
-> ```
->
-> The npm account requires 2FA for publishes, and CI cannot answer an OTP prompt.
-> Until [the fix below](#fixing-the-automated-publish) is applied, **use the
-> manual path**. `0.1.1`–`0.1.7` were all published manually.
+The trusted publisher is configured on npmjs.com (package → Settings → Trusted
+Publisher → GitHub Actions): user `jrodhead`, repository `sessionplan-contracts`,
+workflow `publish.yml`, no environment. Renaming the workflow file or the repo
+breaks publishing until that entry is updated. Switched from the `NPM_TOKEN`
+secret on 2026-10-14 (SES-306), after the token path failed with `EOTP` for
+every release since `v0.1.7`.
 
-### Manual (fallback, and how every release to date was made)
+### Manual (fallback)
 
 ```bash
 npm login                # npm sessions expire; check with `npm whoami` first
@@ -111,29 +107,9 @@ extra flags are needed. Do **not** run `npm run build` and then hand-edit `dist/
 
 ### Prerequisites
 
-- npm account with publish rights on the `@sessionplan` scope, plus your 2FA
-  authenticator (manual path).
-- `NPM_TOKEN` secret on the GitHub repo (automated path — configured, but see
-  the EOTP failure above).
-
-### Fixing the automated publish
-
-The workflow is otherwise correct — it fails only because the stored credential
-cannot satisfy npm's 2FA requirement. Three ways out, cheapest first:
-
-1. **Use an npm automation token.** Automation tokens are designed for CI and
-   are exempt from the 2FA prompt, unlike classic/publish tokens. Generate one
-   on npmjs.com and replace the secret:
-   `gh secret set NPM_TOKEN --repo jrodhead/sessionplan-contracts`
-2. **Set up npm Trusted Publishing (OIDC).** Probably the original intent — the
-   workflow already requests `permissions: id-token: write`, which is only
-   needed for OIDC. Configure the package on npmjs.com to trust this repo and
-   workflow, and no long-lived token is needed at all.
-3. **Relax the package's 2FA setting** to allow automation tokens for writes.
-   Weakest option; prefer 1 or 2.
-
-Verify with a throwaway patch release, or by re-running the failed job after the
-credential changes. Update the warning above once it succeeds.
+- Automated path: the trusted publisher entry on npmjs.com (above). No secret.
+- Manual path: npm account with publish rights on the `@sessionplan` scope,
+  plus your 2FA authenticator.
 
 ---
 
@@ -213,8 +189,9 @@ Never publish internal-only endpoint shapes. This package is public.
 
 **Cause**: npm session expired. Sessions are not long-lived.
 
-**Resolution**: `npm whoami` to confirm, then `npm login`. Only affects the
-manual path — the workflow uses `NPM_TOKEN`.
+**Resolution**: `npm whoami` to confirm, then `npm login` (`--auth-type=web`
+prints a link you can open on another device). Only affects the manual path —
+the workflow uses trusted publishing.
 
 ### 2. Publish workflow fails on "Tag does not match package.json version"
 
@@ -227,14 +204,16 @@ manual path — the workflow uses `NPM_TOKEN`.
 git tag -d v0.1.7 && git push origin :refs/tags/v0.1.7
 ```
 
-### 3. Publish workflow fails with `EOTP`
+### 3. Publish workflow fails with `EOTP` or `ENEEDAUTH`
 
-**Cause**: the npm account requires a 2FA one-time password for publishes, and
-CI cannot provide one. This is the current known state — see
-[Fixing the automated publish](#fixing-the-automated-publish).
+**Cause**: npm did not accept the run as a trusted publisher, so it fell back to
+asking for credentials. Usually the trusted publisher entry on npmjs.com no
+longer matches (repo, user or workflow filename changed), or the workflow lost
+`permissions: id-token: write`, or npm on the runner is older than 11.5.1.
 
-**Resolution**: publish manually for now (`npm publish`, answer the OTP prompt),
-then fix the credential so future releases work unattended.
+**Resolution**: check the entry under the package's Settings → Trusted
+Publisher against the repo and `publish.yml`, then re-run the job. The manual
+path still works in the meantime.
 
 ### 3b. Tag pushed but nothing published, and no workflow run
 
@@ -275,13 +254,13 @@ window it breaks any consumer that already installed it.
 3. Consumers are on exact pins, so anyone who has not bumped is unaffected. Only
    repos that already moved to the bad version need a follow-up PR.
 
-### Suspected `NPM_TOKEN` leak
+### Suspected publish credential leak
 
-1. Revoke the token at npmjs.com → Access Tokens.
-2. Generate a replacement with publish scope.
-3. Update the GitHub secret:
-   `gh secret set NPM_TOKEN --repo jrodhead/sessionplan-contracts`
-4. Check npm's publish history for versions you did not release.
+The automated path holds no long-lived credential. If a personal npm token or
+session may have leaked: revoke it at npmjs.com → Access Tokens, and check npm's
+publish history for versions you did not release. If an old `NPM_TOKEN` secret
+is still on the GitHub repo, delete it (`gh secret delete NPM_TOKEN --repo
+jrodhead/sessionplan-contracts`) — nothing uses it.
 
 ---
 
