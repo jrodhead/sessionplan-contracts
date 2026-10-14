@@ -252,6 +252,220 @@ export const LOG_TYPES_BY_TRAINING_TYPE: Readonly<Record<TrainingType, readonly 
   stretch: ['stretch'],
 };
 
+// ============================================================================
+// Log type rule
+//
+// The one rule every service uses to pick a log type the author did not set:
+// the API when it saves a session, the app when it reads an older one or swaps
+// an exercise. Pure and import-free (see AGENTS.md, shared rules).
+// ============================================================================
+
+/** An input box the logger's set row renders. */
+export type LoggerInput = 'reps' | 'weight' | 'time' | 'distance';
+
+/**
+ * The boxes the logger's set row renders for each log type. `time` is a hold
+ * for `isometric`, `mobility` and `stretch`, and a clock for the rest.
+ */
+export const LOG_TYPE_INPUTS: Readonly<Record<DefaultLogType, readonly LoggerInput[]>> = {
+  strength: ['reps', 'weight'],
+  isometric: ['weight', 'time'],
+  conditioning: ['reps', 'time'],
+  endurance: ['time', 'distance'],
+  carry: ['weight', 'time', 'distance'],
+  mobility: ['time'],
+  stretch: ['time'],
+};
+
+/** Conditioning modalities that cover ground, so default to `endurance`. */
+export const DISTANCE_MODALITIES: readonly Modality[] = [
+  'run',
+  'walk',
+  'row',
+  'bike',
+  'ski',
+  'swim',
+  'stairs',
+] as const;
+
+/**
+ * What was prescribed, as flags. Each service converts its own shape — a session
+ * item's prescription, or a library exercise's prescription hints — so this
+ * package parses nothing. `hold` is a hold duration; `time` is a clock.
+ */
+export interface PrescribedInputs {
+  reps?: boolean;
+  weight?: boolean;
+  time?: boolean;
+  hold?: boolean;
+  distance?: boolean;
+}
+
+/** The library classification the rule reads, when the exercise has an exact match. */
+export interface LogTypeExercise {
+  training_type?: string | null;
+  modality?: string | null;
+  movement_pattern?: string | null;
+  tags?: readonly string[] | null;
+}
+
+/** Tags that name a log type, most specific first (unclassified exercises only). */
+const LOG_TYPE_TAGS: readonly DefaultLogType[] = [
+  'stretch',
+  'isometric',
+  'mobility',
+  'carry',
+  'endurance',
+  'conditioning',
+  'strength',
+];
+
+/**
+ * Pick the log type for an exercise whose author did not set one.
+ *
+ * With a classified library exercise, its training type sets the default and the
+ * allowed set (`LOG_TYPES_BY_TRAINING_TYPE`); the prescription then decides
+ * within that set, so a prescribed load, rep count or distance always has a box.
+ * When nothing the training type allows can show the prescribed load or distance,
+ * or would put a rep count into a hold, the prescription wins. Without a
+ * classification (no match, or a null training type) the prescription decides,
+ * with tags as the tie-break. Nothing prescribed and nothing known: `strength`.
+ */
+export function inferLogType(
+  prescribed: PrescribedInputs,
+  exercise?: LogTypeExercise | null,
+): DefaultLogType {
+  const tags = lowerTags(exercise?.tags);
+  const type = exercise?.training_type;
+  if (!isTrainingType(type)) return fromPrescription(tags, prescribed);
+
+  const libraryDefault = libraryLogType(type, exercise ?? {}, tags.has('isometric'));
+  if (!anyPrescribed(prescribed)) return libraryDefault;
+
+  // Topical tags are ignored once classified; `isometric` survives as the one tag
+  // that states how an exercise is performed.
+  const tieBreak = new Set<string>([libraryDefault, type]);
+  if (tags.has('isometric')) tieBreak.add('isometric');
+  const candidate = fromPrescription(tieBreak, prescribed);
+  const needed = neededInputs(prescribed);
+  const clamped = clampToTrainingType(candidate, type, needed);
+  if (!losesPrescribed(clamped, needed)) return clamped;
+  // Nothing the training type allows keeps the prescription: it wins.
+  if (!losesPrescribed(candidate, needed)) return candidate;
+  return fromPrescription(new Set(), prescribed);
+}
+
+function isTrainingType(value: unknown): value is TrainingType {
+  return typeof value === 'string' && (TRAINING_TYPES as readonly string[]).includes(value);
+}
+
+function lowerTags(tags: readonly string[] | null | undefined): Set<string> {
+  return new Set((tags ?? []).map((tag) => tag.toLowerCase()));
+}
+
+function anyPrescribed(p: PrescribedInputs): boolean {
+  return Boolean(p.reps || p.weight || p.time || p.hold || p.distance);
+}
+
+/** The log type a classified exercise gets when nothing was prescribed. */
+function libraryLogType(
+  type: TrainingType,
+  exercise: LogTypeExercise,
+  isometric: boolean,
+): DefaultLogType {
+  switch (type) {
+    case 'stretch':
+      return 'stretch';
+    case 'mobility':
+      return 'mobility';
+    case 'conditioning':
+      return (DISTANCE_MODALITIES as readonly string[]).includes(exercise.modality ?? '')
+        ? 'endurance'
+        : 'conditioning';
+    case 'strength':
+      if (exercise.movement_pattern === 'carry') return 'carry';
+      return isometric ? 'isometric' : 'strength';
+  }
+}
+
+function neededInputs(p: PrescribedInputs): Set<LoggerInput> {
+  const needed = new Set<LoggerInput>();
+  if (p.reps) needed.add('reps');
+  if (p.weight) needed.add('weight');
+  if (p.time || p.hold) needed.add('time');
+  if (p.distance) needed.add('distance');
+  return needed;
+}
+
+function shows(logType: DefaultLogType, input: LoggerInput): boolean {
+  return LOG_TYPE_INPUTS[logType].includes(input);
+}
+
+/** A prescribed load, rep count or distance with no box to record it. */
+function losesPrescribed(logType: DefaultLogType, needed: ReadonlySet<LoggerInput>): boolean {
+  return (['weight', 'reps', 'distance'] as const).some(
+    (input) => needed.has(input) && !shows(logType, input),
+  );
+}
+
+/**
+ * Keep the log type within those the training type allows, choosing one that
+ * shows every prescribed input where one exists.
+ */
+function clampToTrainingType(
+  candidate: DefaultLogType,
+  type: TrainingType,
+  needed: ReadonlySet<LoggerInput>,
+): DefaultLogType {
+  const allowed = LOG_TYPES_BY_TRAINING_TYPE[type];
+  const covers = (lt: DefaultLogType) => [...needed].every((input) => shows(lt, input));
+
+  if (allowed.includes(candidate) && covers(candidate)) return candidate;
+  const full = allowed.find(covers);
+  if (full) return full;
+
+  // Nothing allowed shows every prescribed input. Keep the candidate if allowed
+  // and it keeps the load, distance and reps; otherwise prefer one that does,
+  // then whichever shows most.
+  if (allowed.includes(candidate) && !losesPrescribed(candidate, needed)) return candidate;
+  const shown = (lt: DefaultLogType) => [...needed].filter((input) => shows(lt, input)).length;
+  const loses = (lt: DefaultLogType) => (losesPrescribed(lt, needed) ? 1 : 0);
+  const ranked = [...allowed].sort((a, b) => loses(a) - loses(b) || shown(b) - shown(a));
+  return ranked[0];
+}
+
+/** The prescription-first derivation, with `tags` as the tie-break. */
+function fromPrescription(tags: ReadonlySet<string>, p: PrescribedInputs): DefaultLogType {
+  // Covering ground: loaded is a carry, unloaded is endurance.
+  if (p.distance) return p.weight ? 'carry' : 'endurance';
+
+  // A duration plus a hold tag is a hold, even alongside a rep count — the
+  // library writes these as `reps: "3-4 holds", time: "10-20s per hold"`.
+  if (p.time || p.hold) {
+    if (tags.has('isometric')) return 'isometric';
+    if (tags.has('stretch')) return 'stretch';
+    if (tags.has('mobility')) return 'mobility';
+  }
+
+  // Reps are reps; unloaded reps against a clock, or a conditioning movement,
+  // want `conditioning`, which shows both.
+  if (p.reps) return !p.weight && (p.time || tags.has('conditioning')) ? 'conditioning' : 'strength';
+
+  if (p.hold) return p.weight ? 'isometric' : 'stretch';
+
+  if (p.time) {
+    if (p.weight || tags.has('carry')) return 'carry';
+    if (tags.has('endurance')) return 'endurance';
+    return 'conditioning';
+  }
+
+  // Nothing but a load, or nothing at all: a tag that keeps the load, else strength.
+  for (const candidate of LOG_TYPE_TAGS) {
+    if (tags.has(candidate) && (!p.weight || shows(candidate, 'weight'))) return candidate;
+  }
+  return 'strength';
+}
+
 /** Classification fields shared by create, update and read shapes. */
 export interface ExerciseTaxonomyFields {
   training_type?: TrainingType;

@@ -27,12 +27,14 @@ import type {
 } from '@sessionplan/contracts';
 ```
 
-Besides types, the package has two kinds of runtime export: `ContractVersion`, which
+Besides types, the package has three kinds of runtime export: `ContractVersion`, which
 mirrors the package version so clients can report the contract revision they were
-built against, and **closed vocabularies** as frozen `const` arrays
+built against; **closed vocabularies** as frozen `const` data
 (`WORKSPACE_SAFETY_PROFILES`, `TRAINING_TYPES`, `MODALITIES`, `MOVEMENT_PATTERNS`,
-`MUSCLES`, `EXERCISE_LEVELS`, `LOG_TYPES_BY_TRAINING_TYPE`), so every service reads
-the same list of allowed values.
+`MUSCLES`, `EXERCISE_LEVELS`, `LOG_TYPES_BY_TRAINING_TYPE`, `LOG_TYPE_INPUTS`,
+`DISTANCE_MODALITIES`), so every service reads the same list of allowed values; and
+**shared rules** (`inferLogType`), so every service that picks an exercise's log type
+picks the same one.
 
 ```ts
 import { ContractVersion } from '@sessionplan/contracts';
@@ -43,9 +45,13 @@ console.log(ContractVersion); // "0.1.7"
 ## Scope
 
 This package is the single source of truth for the API wire contract. It contains
-`interface` / `type` declarations, `ContractVersion`, and closed-vocabulary `const`
-arrays — data, never logic. Runtime builders, validators, and helpers stay in the
-API and its clients.
+`interface` / `type` declarations, `ContractVersion`, closed-vocabulary `const` data,
+and a small number of shared rules. A function belongs here only when two or more
+services must reach the same answer and a disagreement would be stored or seen by
+the user, and only if it is pure, synchronous and total, imports nothing outside this
+package, and ships with a case-table test. `inferLogType` is the one such rule today.
+Runtime builders, validators, parsers of one service's own shapes, and helpers stay
+in the API and its clients.
 
 | Module       | Covers                                                        |
 | ------------ | ------------------------------------------------------------- |

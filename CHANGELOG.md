@@ -7,6 +7,17 @@ While in `0.x`, minor version bumps may include breaking changes.
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-10-14
+
+### Added
+
+- **One rule decides how an exercise is logged when its author didn't say.** `inferLogType` picks the log type from what was prescribed and the exercise's library classification, and always keeps a box for a prescribed load, rep count or distance. `LOG_TYPE_INPUTS` and `DISTANCE_MODALITIES` publish the data it reads.
+
+### Changed
+
+- The package may now hold shared rules: pure, import-free functions two or more services must agree on. See `AGENTS.md` for the four conditions.
+- `ContractVersion` and package version bumped to `0.4.0`.
+
 ## [0.3.0] - 2026-10-11
 
 ### Added

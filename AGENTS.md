@@ -11,8 +11,10 @@ Shared TypeScript wire types for SessionPlan API consumers. Touch this repo when
 
 ## Key Constraints
 
-- This package holds types, `ContractVersion`, and closed-vocabulary `const` arrays (data, never logic).
-- Runtime builders, validators, and service helpers stay in producer/consumer repos.
+- This package holds types, `ContractVersion`, closed-vocabulary `const` data, and shared rules.
+- A function belongs here only if all hold: (1) two or more services must reach the same answer from the same inputs, and disagreement would be stored or seen by the user; (2) it is pure, synchronous and total — no I/O, clock, randomness or environment; (3) it imports nothing outside this package, and its inputs and output are types exported here; (4) it ships with a case-table test in this repo.
+- Changing a rule's output for any input is a behaviour change: bump the minor and record it under `### Changed`.
+- Runtime builders, validators, parsers of one service's own shapes, and service helpers stay in producer/consumer repos.
 - Consumers pin exact versions. Any changed existing shape requires coordinated producer and consumer updates.
 - Additive optional fields are the safest compatibility path, but still require versioning and consumer awareness.
 - `sessionplan-api` is the contract producer; `sessionplan-mcp` and `sessionplan-app` are consumers.
@@ -20,7 +22,8 @@ Shared TypeScript wire types for SessionPlan API consumers. Touch this repo when
 ## High-Risk Changes
 
 - Changing existing exported shapes without updating the API producer and every exact-pinned consumer.
-- Adding runtime builders, validators, or service helpers to this type-focused package.
+- Adding runtime builders, validators, or service helpers to this package, or a function that fails any of the four shared-rule conditions above.
+- Changing a shared rule's output without a minor bump: consumers pin exact versions, so a changed rule reaches each service only when its pin moves.
 - Publishing or building declarations that do not match the source types consumed by API/MCP/app.
 - Treating a `0.x` version bump as harmless when consumers deploy independently.
 

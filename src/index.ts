@@ -2,8 +2,9 @@
  * @sessionplan/contracts
  *
  * Shared TypeScript wire contracts for the SessionPlan API. Types, the
- * `ContractVersion` constant below, and closed-vocabulary `const` arrays — data,
- * never logic.
+ * `ContractVersion` constant below, closed-vocabulary `const` data, and shared
+ * rules — pure, import-free functions that two or more services must agree on
+ * (see AGENTS.md for the four conditions).
  *
  * Public for installation convenience; not a stable external contract until 1.0.
  */
@@ -23,4 +24,4 @@ export * from './public-catalogs.js';
  * The contract revision this build was published at. Mirrors package.json
  * version so clients can report the contract they were compiled against.
  */
-export const ContractVersion = '0.3.0';
+export const ContractVersion = '0.4.0';
