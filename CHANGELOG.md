@@ -7,6 +7,10 @@ While in `0.x`, minor version bumps may include breaking changes.
 
 ## [Unreleased]
 
+### Fixed
+
+- `inferLogType` ignores a null inside an exercise's tags instead of throwing.
+
 ## [0.4.0] - 2026-10-14
 
 ### Added

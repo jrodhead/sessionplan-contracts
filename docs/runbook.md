@@ -3,7 +3,7 @@
 **Package**: [`@sessionplan/contracts`](https://www.npmjs.com/package/@sessionplan/contracts)
 **Repo**: `sessionplan-contracts`
 **Owner**: Jared Headrick, jared@sessionplan.ai
-**Last Updated**: August 12, 2026
+**Last Updated**: October 15, 2026
 
 This is a **published npm package**, not a deployed service. There is nothing to
 roll back in place: once a version is on npm it is immutable, and the only way
@@ -37,8 +37,11 @@ that does not exist yet.
 3. Add a `CHANGELOG.md` entry, including a `### Changed` note recording the
    `ContractVersion` / package bump (existing convention).
 4. `npm run typecheck && npm test && npm run build`.
-5. Open a PR, merge to `main`.
-6. [Publish](#publishing) from merged `main`.
+5. Open a PR, merge to `main` (CI runs typecheck, tests and build).
+6. [Publish](#publishing) from merged `main`: push the `v*` tag, then **approve
+   the staged version on npmjs.com** (2FA). Confirm with
+   `npm view @sessionplan/contracts version` — consumers cannot install it until
+   it is approved.
 7. [Update consumers](#updating-consumers) that actually need the new version.
 8. Deploy the producer (`sessionplan-api`) before or with consumers when runtime
    behavior changed, not just types.
@@ -62,11 +65,18 @@ build. See `AGENTS.md` for the cross-repo constraints.
 
 ### Automated (preferred)
 
-`.github/workflows/publish.yml` fires on a pushed `v*` tag. It verifies the tag
-matches `package.json`, runs `npm ci`, builds, and **stages** the version with
-npm trusted publishing (OIDC): npm exchanges the run's GitHub OIDC token for a
-short-lived token that can only stage. There is no stored secret, and npm
-attaches a provenance attestation (the repo is public).
+`.github/workflows/publish.yml` fires on a pushed `v*` tag and runs two jobs:
+
+- **build** (no publish rights): verifies the tag matches `package.json`, runs
+  `npm ci`, typecheck and tests, builds, and packs the tarball.
+- **stage** (the only job that can request a publish token): installs a pinned
+  npm, downloads that exact tarball, and **stages** it with npm trusted
+  publishing (OIDC). npm exchanges the job's GitHub OIDC token for a
+  short-lived token that can only stage. It installs and runs nothing from the
+  package.
+
+There is no stored secret, and npm attaches a provenance attestation (the repo
+is public). Actions are pinned by commit SHA; bump them deliberately.
 
 **A staged version is not released until you approve it** on npmjs.com (the
 package's staged versions, or `npm stage list` / `npm stage approve <id>`),
@@ -101,11 +111,11 @@ npm publish              # prepublishOnly runs clean + build automatically
 Tag the release afterwards so the repo still records what shipped:
 
 ```bash
-git tag v0.1.7 && git push origin v0.1.7
+git tag v0.4.0 && git push origin v0.4.0
 ```
 
-(The tag will trigger the workflow, which will fail at the publish step because
-the version already exists. Harmless, but noisy — another reason to fix it.)
+(The tag triggers the workflow, whose stage step then fails because the version
+already exists. Harmless.)
 
 `package.json` sets `publishConfig.access: public` and ships only `dist/`, so no
 extra flags are needed. Do **not** run `npm run build` and then hand-edit `dist/`
@@ -125,7 +135,7 @@ For each consumer that needs the new version:
 
 ```bash
 cd ../sessionplan-api          # or -mcp / -app
-# edit package.json: "@sessionplan/contracts": "0.1.7"   (exact, no caret)
+# edit package.json: "@sessionplan/contracts": "0.4.0"   (exact, no caret)
 npm install
 npx tsc --noEmit
 npm test
@@ -201,13 +211,13 @@ the workflow uses trusted publishing.
 
 ### 2. Publish workflow fails on "Tag does not match package.json version"
 
-**Cause**: the tag and `package.json` disagree (e.g. tagged `v0.1.7` against a
+**Cause**: the tag and `package.json` disagree (e.g. tagged `v0.4.0` against a
 `0.1.6` package, or tagged before merging the version bump).
 
 **Resolution**: delete the tag, fix the version, re-tag from merged `main`:
 
 ```bash
-git tag -d v0.1.7 && git push origin :refs/tags/v0.1.7
+git tag -d v0.4.0 && git push origin :refs/tags/v0.4.0
 ```
 
 ### 3. Publish workflow fails with `EOTP` or `ENEEDAUTH`
@@ -252,10 +262,10 @@ do not attempt to republish the same number.
 window it breaks any consumer that already installed it.
 
 1. Publish a corrected patch version immediately (`0.1.8`, not a re-publish of
-   `0.1.7`).
+   `0.4.0`).
 2. Deprecate the bad one so installs warn:
    ```bash
-   npm deprecate @sessionplan/contracts@0.1.7 "Broken: <reason>. Use 0.1.8."
+   npm deprecate @sessionplan/contracts@0.4.0 "Broken: <reason>. Use 0.4.1."
    ```
 3. Consumers are on exact pins, so anyone who has not bumped is unaffected. Only
    repos that already moved to the bad version need a follow-up PR.
@@ -281,7 +291,7 @@ npm run clean       # rm -rf dist
 
 # Release
 npm whoami                                        # check npm session
-git tag v0.1.7 && git push origin v0.1.7          # automated publish
+git tag v0.4.0 && git push origin v0.4.0          # automated publish
 npm publish                                       # manual publish
 
 # Inspection

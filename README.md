@@ -1,6 +1,6 @@
 # @sessionplan/contracts
 
-Type declarations for the SessionPlan API.
+Type declarations, closed vocabularies and shared rules for the SessionPlan API.
 
 > **Public for installation convenience; not a stable external contract until 1.0.**
 > These types describe the shapes exchanged between the SessionPlan API and its
@@ -39,7 +39,7 @@ picks the same one.
 ```ts
 import { ContractVersion } from '@sessionplan/contracts';
 
-console.log(ContractVersion); // "0.1.7"
+console.log(ContractVersion); // "0.4.0"
 ```
 
 ## Scope
@@ -61,7 +61,7 @@ in the API and its clients.
 | `workspaces` | Workspace list/detail responses                               |
 | `sessions`   | Session create/update requests and responses                  |
 | `logs`       | Performance log content + `PerformanceSummary`                |
-| `exercises`  | Exercise resolution and search responses                      |
+| `exercises`  | Exercise resolution and search responses; the log type rule   |
 | `reports`    | Progress report content and list/detail responses             |
 | `health`     | `/health` diagnostics response                                |
 | `public-catalogs` | Public location session catalog responses and provenance |
@@ -69,7 +69,7 @@ in the API and its clients.
 ## Versioning
 
 While in `0.x`, minor versions may introduce breaking changes. Consumers pin an
-**exact** version (`"@sessionplan/contracts": "0.1.7"`).
+**exact** version (`"@sessionplan/contracts": "0.4.0"`).
 
 **To publish a release or bump a consumer, see [`docs/runbook.md`](docs/runbook.md).**
 It covers the publish flow (tag-triggered and manual), consumer update ordering,
@@ -81,4 +81,5 @@ breaking-change rules, and what to do about a bad published version.
 npm install
 npm run build      # emit dist/ declarations + js
 npm run typecheck  # type-check without emitting
+npm test           # vitest, including the log type case table
 ```

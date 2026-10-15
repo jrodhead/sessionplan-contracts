@@ -1,6 +1,6 @@
 # sessionplan-contracts Agent Guide
 
-Shared TypeScript wire types for SessionPlan API consumers. Touch this repo when request/response shapes shared across services change.
+Shared TypeScript wire types for SessionPlan API consumers. Touch this repo when request/response shapes shared across services change, or when a shared rule (such as `inferLogType`) does.
 
 ## First Context
 

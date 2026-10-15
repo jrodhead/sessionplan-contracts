@@ -242,8 +242,11 @@ export const EXERCISE_LEVELS: readonly ExerciseLevel[] = [
 ] as const;
 
 /**
- * The logger log types each training type allows when the app chooses one (a
- * swap). An item's explicit log type always takes precedence.
+ * The logger log types each training type allows when a log type is chosen for
+ * an exercise whose author did not set one: the API on save, and the app on a
+ * swap or when reading an older session (see `inferLogType`). An item's explicit
+ * log type always takes precedence, and the prescription wins when nothing
+ * allowed can show a prescribed load, rep count or distance.
  */
 export const LOG_TYPES_BY_TRAINING_TYPE: Readonly<Record<TrainingType, readonly DefaultLogType[]>> = {
   strength: ['strength', 'isometric', 'carry'],
@@ -359,8 +362,11 @@ function isTrainingType(value: unknown): value is TrainingType {
   return typeof value === 'string' && (TRAINING_TYPES as readonly string[]).includes(value);
 }
 
-function lowerTags(tags: readonly string[] | null | undefined): Set<string> {
-  return new Set((tags ?? []).map((tag) => tag.toLowerCase()));
+function lowerTags(tags: readonly (string | null)[] | null | undefined): Set<string> {
+  // Library data, not user input, but a stray null must not fail a save.
+  return new Set(
+    (tags ?? []).filter((tag): tag is string => typeof tag === 'string').map((tag) => tag.toLowerCase()),
+  );
 }
 
 function anyPrescribed(p: PrescribedInputs): boolean {

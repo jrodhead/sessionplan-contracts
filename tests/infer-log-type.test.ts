@@ -234,6 +234,11 @@ describe('inferLogType guarantees', () => {
     }
   });
 
+  it('tolerates a null inside library tags', () => {
+    const exercise = { training_type: 'strength', tags: [null, 'Isometric'] as unknown as string[] };
+    expect(inferLogType({ hold: true }, exercise)).toBe('isometric');
+  });
+
   it('every distance modality is a published modality', () => {
     for (const modality of DISTANCE_MODALITIES) expect(MODALITIES).toContain(modality);
   });

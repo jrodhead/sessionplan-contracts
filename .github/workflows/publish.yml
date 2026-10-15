@@ -5,26 +5,21 @@ on:
     tags:
       - "v*"
 
-jobs:
-  publish:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
-    steps:
-      - uses: actions/checkout@v4
+# Two jobs, so the only code that can request an npm publish token is the
+# stage job, which installs nothing and runs nothing from the package.
+# Actions are pinned by commit SHA (comment shows the tag).
+permissions:
+  contents: read
 
-      - uses: actions/setup-node@v4
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: "22"
-          registry-url: "https://registry.npmjs.org"
-
-      # Trusted publishing and `npm stage` need a current npm; Node 22 ships npm 10.
-      - name: Update npm
-        run: npm install -g npm@latest
-
-      - name: Install dependencies
-        run: npm ci
 
       - name: Verify tag matches package version
         run: |
@@ -35,15 +30,52 @@ jobs:
             exit 1
           fi
 
-      - name: Build
-        run: npm run build
+      - name: Install dependencies
+        run: npm ci
 
-      # Trusted publishing, staged: npm exchanges this run's GitHub OIDC token
-      # (id-token: write, above) for a short-lived token that can only *stage* a
-      # version. Nothing is released until the owner approves the staged version
-      # on npmjs.com with 2FA. No stored secret; npm adds a provenance
-      # attestation because the repo is public. The trusted publisher on
-      # npmjs.com names this repo and this file (publish.yml), with direct
-      # publish and dist-tag management left off.
+      - name: Typecheck and test
+        run: npm run typecheck && npm test
+
+      # prepublishOnly does not run for `npm pack`, so build explicitly.
+      - name: Build and pack
+        run: |
+          npm run clean
+          npm run build
+          npm pack
+          mv sessionplan-contracts-*.tgz package.tgz
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: package
+          path: package.tgz
+          if-no-files-found: error
+
+  stage:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "22"
+          registry-url: "https://registry.npmjs.org"
+
+      # Trusted publishing and `npm stage` need a current npm; Node 22 ships
+      # npm 10. Pinned so a release cannot pick up an unvetted npm.
+      - name: Install npm
+        run: npm install -g npm@12.2.0
+
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: package
+
+      # Trusted publishing, staged: npm exchanges this job's GitHub OIDC token
+      # for a short-lived token that can only *stage* a version. Nothing is
+      # released until the owner approves it on npmjs.com with 2FA. The
+      # tarball is the one the build job tested; this job installs nothing.
+      # The trusted publisher on npmjs.com names this repo and this file
+      # (publish.yml), with direct publish and dist-tag management left off.
       - name: Stage for publishing
-        run: npm stage publish . --access public
+        run: npm stage publish ./package.tgz --access public
