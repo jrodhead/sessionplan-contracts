@@ -72,18 +72,52 @@ export interface UnitContext {
 // History
 // ============================================================================
 
+/**
+ * One logged session of an exercise. Each measure is present only when it was
+ * recorded: a run carries `distance`, `time` and `pace` and no `load` or `reps`.
+ * Distance and pace are written in the person's current unit system.
+ */
 export interface ExerciseHistorySnapshot {
   date: string;
-  load: string;
-  reps: number;
-  rpe: number;
+  /** Present when weight or reps were recorded; "bodyweight" when reps were recorded without weight. */
+  load?: string;
+  /** Present only when reps were recorded. */
+  reps?: number;
+  /** Present only when RPE was recorded. */
+  rpe?: number;
+  /** Number of sets logged. */
+  sets?: number;
+  /** Last set's distance, e.g. "4 mi" or "400 m". */
+  distance?: string;
+  /** Last set's time, e.g. "31:28". */
+  time?: string;
+  /** Last set's hold, e.g. "45s". */
+  hold?: string;
+  /** Pace over the sets that recorded both time and distance, e.g. "7:52 /mi". */
+  pace?: string;
 }
 
+/**
+ * An exercise's recent history for the AI. Each measure is present only when it
+ * was recorded; an absent field means not recorded, never zero.
+ */
 export interface ExerciseHistorySummary {
   exercise: string;
   lastPerformed: string;
-  lastLoad: string;
-  lastReps: number;
+  /** Present when weight or reps were recorded; "bodyweight" when reps were recorded without weight. */
+  lastLoad?: string;
+  /** Present only when reps were recorded. */
+  lastReps?: number;
+  /** Number of sets in the most recent log. */
+  lastSets?: number;
+  /** Last set's distance, e.g. "4 mi" or "400 m". */
+  lastDistance?: string;
+  /** Last set's time, e.g. "31:28". */
+  lastTime?: string;
+  /** Last set's hold, e.g. "45s". */
+  lastHold?: string;
+  /** Pace over the most recent log's sets that recorded both time and distance. */
+  lastPace?: string;
   avgRPE: number;
   peakLoad?: string;
   peakReps?: number;

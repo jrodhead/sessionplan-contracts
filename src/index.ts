@@ -19,9 +19,10 @@ export * from './exercises.js';
 export * from './reports.js';
 export * from './health.js';
 export * from './public-catalogs.js';
+export * from './format.js';
 
 /**
  * The contract revision this build was published at. Mirrors package.json
  * version so clients can report the contract they were compiled against.
  */
-export const ContractVersion = '0.4.0';
+export const ContractVersion = '0.5.0';

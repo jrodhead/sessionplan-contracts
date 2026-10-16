@@ -7,6 +7,17 @@ While in `0.x`, minor version bumps may include breaking changes.
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-10-15
+
+### Added
+
+- **Exercise history can describe a run, not just a lift.** `formatDistance`, `formatDuration`, `parseDuration` and `formatPace` are the one way every service writes distance, time and pace (SES-311). `ExerciseSummary` gains optional time, hold and distance totals, and `ExerciseHistorySummary` and `ExerciseHistorySnapshot` gain optional set count, distance, time, hold and pace.
+
+### Changed
+
+- `ExerciseHistorySummary.lastLoad` and `lastReps`, and `ExerciseHistorySnapshot.load`, `reps` and `rpe`, are now optional: each is present only when it was recorded. Readers that assumed them must handle their absence.
+- `ContractVersion` and package version bumped to `0.5.0`.
+
 ### Fixed
 
 - `inferLogType` ignores a null inside an exercise's tags instead of throwing.

@@ -97,6 +97,16 @@ export interface ExerciseSummary {
   avgRpe?: number;
   maxWeight?: number;
   totalVolume: number;
+  /** Seconds of time recorded across the counted sets. Absent when none was recorded. */
+  totalTimeSeconds?: number;
+  /** Seconds of hold recorded across the counted sets. Absent when none was recorded. */
+  totalHoldSeconds?: number;
+  /** Metres recorded across the counted sets (miles converted). Absent when none was recorded. */
+  totalDistanceMeters?: number;
+  /** Time of the sets that recorded both time and distance — the only sets pace is computed from. */
+  pacedTimeSeconds?: number;
+  /** Distance in metres of the sets that recorded both time and distance. */
+  pacedDistanceMeters?: number;
   jsonPaths?: string[];
 }
 
