@@ -248,7 +248,8 @@ export interface MuscleGroupVolume {
 export interface PerformanceSummary {
   sessionCount: number;
   adherence: number;
-  avgRPE: number;
+  /** Mean RPE over the range's logs that recorded one; absent when none did, never 0. */
+  avgRPE?: number;
   volumeTrends: ExerciseVolumeTrend[];
   prs: PRRecord[];
   exerciseFrequency: ExerciseFrequencyItem[];

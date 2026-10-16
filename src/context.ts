@@ -118,7 +118,8 @@ export interface ExerciseHistorySummary {
   lastHold?: string;
   /** Pace over the most recent log's sets that recorded both time and distance. */
   lastPace?: string;
-  avgRPE: number;
+  /** Mean RPE over the summarised sessions that recorded one; absent when none did, never 0. */
+  avgRPE?: number;
   peakLoad?: string;
   peakReps?: number;
   peakDate?: string;

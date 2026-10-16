@@ -7,6 +7,13 @@ While in `0.x`, minor version bumps may include breaking changes.
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-10-16
+
+### Changed
+
+- `ExerciseHistorySummary.avgRPE` and `PerformanceSummary.avgRPE` are now optional: each is present only when an RPE was recorded, and is never 0 (SES-320). Readers that assumed them must handle their absence.
+- `ContractVersion` and package version bumped to `0.6.0`.
+
 ## [0.5.0] - 2026-10-15
 
 ### Added
