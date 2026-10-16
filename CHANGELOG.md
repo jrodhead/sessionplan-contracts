@@ -7,6 +7,16 @@ While in `0.x`, minor version bumps may include breaking changes.
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-10-16
+
+### Added
+
+- **One rule decides whether an effort was recorded.** `isRecordedRpe` (a number from 1 to 10) and `meanRecordedRpe` (the mean of the recorded values, or undefined) are what the API and the app use, so the log page and the coach report the same effort. `RPE_MIN` and `RPE_MAX` publish the scale.
+
+### Changed
+
+- `ContractVersion` and package version bumped to `0.7.0`. 0.6.0 was staged but not released; its change (optional `avgRPE`) ships in this version.
+
 ## [0.6.0] - 2026-10-16
 
 ### Changed
