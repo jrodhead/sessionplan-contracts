@@ -21,14 +21,14 @@ While in `0.x`, minor version bumps may include breaking changes.
 
 ### Changed
 
-- `ExerciseHistorySummary.avgRPE` and `PerformanceSummary.avgRPE` are now optional: each is present only when an RPE was recorded, and is never 0 (SES-320). Readers that assumed them must handle their absence.
+- `ExerciseHistorySummary.avgRPE` and `PerformanceSummary.avgRPE` are now optional: each is present only when an RPE was recorded, and is never 0. Readers that assumed them must handle their absence.
 - `ContractVersion` and package version bumped to `0.6.0`.
 
 ## [0.5.0] - 2026-10-15
 
 ### Added
 
-- **Exercise history can describe a run, not just a lift.** `formatDistance`, `formatDuration`, `parseDuration` and `formatPace` are the one way every service writes distance, time and pace (SES-311). `ExerciseSummary` gains optional time, hold and distance totals, and `ExerciseHistorySummary` and `ExerciseHistorySnapshot` gain optional set count, distance, time, hold and pace.
+- **Exercise history can describe a run, not just a lift.** `formatDistance`, `formatDuration`, `parseDuration` and `formatPace` are the one way every service writes distance, time and pace. `ExerciseSummary` gains optional time, hold and distance totals, and `ExerciseHistorySummary` and `ExerciseHistorySnapshot` gain optional set count, distance, time, hold and pace.
 
 ### Changed
 
@@ -97,7 +97,7 @@ While in `0.x`, minor version bumps may include breaking changes.
 
 ### Added
 
-- `WorkspaceSafetyProfile` and `WORKSPACE_SAFETY_PROFILES`, plus an optional `safetyProfile` on `WorkspaceSettings`. A workspace selects a safety posture from a closed set and the server renders the instruction text; the workspace never supplies text of its own. Absent means the default posture, so existing workspaces are unaffected. Additive — `WorkspaceSettings` already carried an index signature, so no consumer breaks (SES-276).
+- `WorkspaceSafetyProfile` and `WORKSPACE_SAFETY_PROFILES`, plus an optional `safetyProfile` on `WorkspaceSettings`. A workspace selects a safety posture from a closed set and the server renders the instruction text; the workspace never supplies text of its own. Absent means the default posture, so existing workspaces are unaffected. Additive — `WorkspaceSettings` already carried an index signature, so no consumer breaks.
 
 ### Changed
 
@@ -107,7 +107,7 @@ While in `0.x`, minor version bumps may include breaking changes.
 
 ### Added
 
-- `RecentSessionTemplate.completion.notes` — the session-level note the user wrote when logging, carried into generation context alongside the other completion signals. Previously the bundle reported what happened in a session (`completionStatus`, `sessionRpe`, `skippedSections`, set-level data) but never why, so a deliberate load change was indistinguishable from a regression. Additive and optional; consumers that ignore it are unaffected. See SES-275.
+- `RecentSessionTemplate.completion.notes` — the session-level note the user wrote when logging, carried into generation context alongside the other completion signals. Previously the bundle reported what happened in a session (`completionStatus`, `sessionRpe`, `skippedSections`, set-level data) but never why, so a deliberate load change was indistinguishable from a regression. Additive and optional; consumers that ignore it are unaffected.
 
 ### Added
 
