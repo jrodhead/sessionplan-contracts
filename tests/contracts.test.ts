@@ -24,7 +24,7 @@ import packageJson from '../package.json';
 
 // A same-week session written before exercise-taxonomy-by-training-type — no
 // `conditioning`, no `completion` — must still satisfy the type, so the release
-// stays additive for sessionplan-ai and older pins. Checked by `tsc` over this
+// stays additive for older pins. Checked by `tsc` over this
 // file (vitest strips types without checking them).
 const legacySameWeekSession: SameWeekSession = {
   sessionId: 's1',
