@@ -318,7 +318,8 @@ export type DefaultLogType =
   | 'endurance'
   | 'carry'
   | 'mobility'
-  | 'stretch';
+  | 'stretch'
+  | 'breathwork';
 
 export interface ExerciseEntry {
   name: string;
