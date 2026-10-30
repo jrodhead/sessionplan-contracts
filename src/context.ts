@@ -14,6 +14,7 @@ import type {
 } from './profile.js';
 import type { ExerciseSummary } from './logs.js';
 import type { ReportKPI } from './reports.js';
+import type { BreathCycle } from './sessions.js';
 
 // ============================================================================
 // Profile Context
@@ -95,6 +96,8 @@ export interface ExerciseHistorySnapshot {
   hold?: string;
   /** Pace over the sets that recorded both time and distance, e.g. "7:52 /mi". */
   pace?: string;
+  /** The breath last logged, in seconds per segment; the shape a prescription's `breath` takes. */
+  breath?: BreathCycle;
 }
 
 /**
@@ -118,6 +121,8 @@ export interface ExerciseHistorySummary {
   lastHold?: string;
   /** Pace over the most recent log's sets that recorded both time and distance. */
   lastPace?: string;
+  /** The breath last logged, in seconds per segment; the shape a prescription's `breath` takes. */
+  lastBreath?: BreathCycle;
   /** Mean RPE over the summarised sessions that recorded one; absent when none did, never 0. */
   avgRPE?: number;
   peakLoad?: string;
