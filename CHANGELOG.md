@@ -7,6 +7,16 @@ While in `0.x`, minor version bumps may include breaking changes.
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-10-30
+
+### Added
+
+- **A logged breath reaches the AI's history.** `ExerciseSummary.lastBreath` records the breath of the last set or round that logged one; `ExerciseHistorySummary.lastBreath` and `ExerciseHistorySnapshot.breath` carry it to the AI as a `BreathCycle`, the shape a prescription's `breath` takes.
+
+### Changed
+
+- `ContractVersion` and package version bumped to `0.9.0`.
+
 ## [0.8.0] - 2026-10-30
 
 ### Added

@@ -26,4 +26,4 @@ export * from './rpe.js';
  * The contract revision this build was published at. Mirrors package.json
  * version so clients can report the contract they were compiled against.
  */
-export const ContractVersion = '0.8.0';
+export const ContractVersion = '0.9.0';

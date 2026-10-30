@@ -112,6 +112,8 @@ export interface ExerciseSummary {
   pacedTimeSeconds?: number;
   /** Distance in metres of the sets that recorded both time and distance. */
   pacedDistanceMeters?: number;
+  /** The breath of the last counted set or round that recorded one. Absent when none did. */
+  lastBreath?: BreathCycle;
   jsonPaths?: string[];
 }
 
