@@ -7,6 +7,18 @@ While in `0.x`, minor version bumps may include breaking changes.
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-10-30
+
+### Added
+
+- **Breathwork is a training type and a log type.** `breathwork` joins `TrainingType` and `DefaultLogType`; its logger row shows `time` and a new `pace` input, and `inferLogType` gives it to an item whose only measure is a breath with a clock, while a breath alongside reps, load, distance or a hold keeps the type those call for.
+- **A breath can be prescribed on any item.** `BreathCycle` and `BreathPrescription` (a cycle, an optional `to` ramp, an optional `breaths` count); `PrescribedInputs.breath`; and `SetEntry.breath` / `ExercisePerformance.breath` for the pace actually breathed.
+
+### Changed
+
+- `TrainingType`, `DefaultLogType` and `LoggerInput` are wider unions, so an exhaustive switch or `Record` over them needs the new member.
+- `ContractVersion` and package version bumped to `0.8.0`.
+
 ## [0.7.0] - 2026-10-16
 
 ### Added

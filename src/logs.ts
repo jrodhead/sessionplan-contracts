@@ -4,6 +4,7 @@
  */
 import type { UnitSystem } from './common.js';
 import type { LinkedSessionProvenance } from './public-catalogs.js';
+import type { BreathCycle } from './sessions.js';
 
 // ============================================================================
 // Core Performance Log Types (perf-2 format)
@@ -24,6 +25,8 @@ export interface ExercisePerformance {
   distanceMiles?: number;
   side?: 'L' | 'R' | 'B';
   tempo?: string;
+  /** The pace actually breathed, on a breathwork row. */
+  breath?: BreathCycle;
   completed?: boolean;
   notes?: string;
 }
@@ -42,6 +45,8 @@ export interface SetEntry {
   distanceMiles?: number;
   side?: 'L' | 'R' | 'B';
   tempo?: string;
+  /** The pace actually breathed, on a breathwork row. */
+  breath?: BreathCycle;
   restSeconds?: number;
   completed?: boolean;
   notes?: string;

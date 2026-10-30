@@ -96,3 +96,37 @@ export interface SessionListResponse {
   sessions: SessionListItem[];
   pagination: PaginationMeta;
 }
+
+// ============================================================================
+// Breath prescription
+//
+// Breathing is part of an item's prescription, like load and reps, not a kind of
+// exercise: box breathing, a yin pose and a goblet squat may all carry one.
+// ============================================================================
+
+/**
+ * One breath, in seconds per segment. Zero is legal for any segment: a cycle with
+ * no holds is circular breathing. The breath engine takes this as the positional
+ * `[inhale, inhaleHold, exhale, exhaleHold]`; named fields are what a person or an
+ * AI author writes without getting the order wrong.
+ */
+export interface BreathCycle {
+  inhale: number;
+  inhaleHold: number;
+  exhale: number;
+  exhaleHold: number;
+}
+
+/**
+ * The breath an item prescribes, at `prescription.breath`. The cycle is breathed
+ * throughout, or ramped from it to `to` over the item's length.
+ *
+ * Length is the item's existing `prescription.timeSeconds`, or `breaths` when it is
+ * counted in breaths — a pose held for 12 breaths. An item with both is ill-formed.
+ */
+export interface BreathPrescription extends BreathCycle {
+  /** The cycle a ramp arrives at. Absent or null: the cycle holds steady. */
+  to?: BreathCycle | null;
+  /** Length as a count of breaths, in place of `timeSeconds`. */
+  breaths?: number | null;
+}

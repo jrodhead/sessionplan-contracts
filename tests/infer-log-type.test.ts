@@ -169,6 +169,64 @@ const CASES: Case[] = [
     exercise: { tags: ['stretch', 'carry'] },
     expected: 'carry',
   },
+
+  // Breathwork (breath-sessions-v1, session-content: "Breath-only items log as breathwork").
+  // A breath with a clock is breathwork; with reps, load or distance it is the
+  // exercise it paces; with a hold it is a pose held for breaths.
+  {
+    name: 'box breathing: breathwork exercise, breath and time',
+    prescribed: { breath: true, time: true },
+    exercise: { training_type: 'breathwork' },
+    expected: 'breathwork',
+  },
+  {
+    name: 'breathwork exercise with nothing prescribed',
+    prescribed: {},
+    exercise: { training_type: 'breathwork' },
+    expected: 'breathwork',
+  },
+  {
+    name: 'unmatched breath-only item is breathwork, never strength',
+    prescribed: { breath: true, time: true },
+    exercise: null,
+    expected: 'breathwork',
+  },
+  {
+    name: 'unmatched breath counted in breaths, no clock',
+    prescribed: { breath: true },
+    exercise: null,
+    expected: 'breathwork',
+  },
+  {
+    name: 'goblet squat paced by the breath stays strength',
+    prescribed: { breath: true, reps: true, weight: true },
+    exercise: { training_type: 'strength', movement_pattern: 'squat' },
+    expected: 'strength',
+  },
+  {
+    name: 'unmatched lift paced by the breath stays strength',
+    prescribed: { breath: true, reps: true, weight: true },
+    exercise: null,
+    expected: 'strength',
+  },
+  {
+    name: 'a run paced by the breath stays endurance',
+    prescribed: { breath: true, time: true, distance: true },
+    exercise: { training_type: 'conditioning', modality: 'run' },
+    expected: 'endurance',
+  },
+  {
+    name: 'yin pose held for breaths stays a stretch',
+    prescribed: { breath: true, hold: true },
+    exercise: { training_type: 'stretch' },
+    expected: 'stretch',
+  },
+  {
+    name: 'stretch with a breath and a clock stays a stretch',
+    prescribed: { breath: true, time: true },
+    exercise: { training_type: 'stretch' },
+    expected: 'stretch',
+  },
 ];
 
 describe('inferLogType case table', () => {
@@ -177,7 +235,7 @@ describe('inferLogType case table', () => {
   });
 });
 
-const FLAGS: (keyof PrescribedInputs)[] = ['reps', 'weight', 'time', 'hold', 'distance'];
+const FLAGS: (keyof PrescribedInputs)[] = ['reps', 'weight', 'time', 'hold', 'distance', 'breath'];
 const ALL_PRESCRIPTIONS: PrescribedInputs[] = Array.from({ length: 1 << FLAGS.length }, (_, mask) =>
   Object.fromEntries(FLAGS.map((flag, i) => [flag, Boolean(mask & (1 << i))])),
 );
@@ -231,6 +289,22 @@ describe('inferLogType guarantees', () => {
           (p.reps && !LOG_TYPE_INPUTS[lt].includes('reps'));
         expect(allowed.every(loses), JSON.stringify({ p, exercise, result })).toBe(true);
       }
+    }
+  });
+
+  it('never logs a breath alongside reps, load or distance as breathwork', () => {
+    for (const exercise of EXERCISES) {
+      for (const p of ALL_PRESCRIPTIONS) {
+        if (!(p.reps || p.weight || p.distance)) continue;
+        expect(inferLogType(p, exercise), JSON.stringify({ p, exercise })).not.toBe('breathwork');
+      }
+    }
+  });
+
+  it('never logs an unclassified breath-only item as strength', () => {
+    for (const p of ALL_PRESCRIPTIONS) {
+      if (!p.breath || p.reps || p.weight || p.distance || p.hold) continue;
+      expect(inferLogType(p, null), JSON.stringify(p)).toBe('breathwork');
     }
   });
 

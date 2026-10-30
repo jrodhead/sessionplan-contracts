@@ -35,8 +35,8 @@ const legacySameWeekSession: SameWeekSession = {
 };
 
 describe('exercise taxonomy vocabularies', () => {
-  it('TRAINING_TYPES is exactly the four types, with no section roles', () => {
-    expect([...TRAINING_TYPES]).toEqual(['strength', 'conditioning', 'mobility', 'stretch']);
+  it('TRAINING_TYPES is exactly the five types, with no section roles', () => {
+    expect([...TRAINING_TYPES]).toEqual(['strength', 'conditioning', 'mobility', 'stretch', 'breathwork']);
   });
 
   it('MODALITIES is exactly the conditioning modality set', () => {
@@ -106,6 +106,7 @@ describe('exercise taxonomy vocabularies', () => {
       conditioning: ['conditioning', 'endurance', 'carry'],
       mobility: ['mobility', 'isometric', 'strength'],
       stretch: ['stretch'],
+      breathwork: ['breathwork'],
     });
   });
 

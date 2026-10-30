@@ -15,15 +15,18 @@ import type { DefaultLogType } from './context.js';
 
 /**
  * What kind of exercise this is — not the section it fills. Warm-up and
- * cool-down are section roles, so they are not training types.
+ * cool-down are section roles, so they are not training types. `breathwork` is a
+ * breathing technique (box breathing, 4-7-8); a pose or a lift that is paced by
+ * the breath keeps its own type.
  */
-export type TrainingType = 'strength' | 'conditioning' | 'mobility' | 'stretch';
+export type TrainingType = 'strength' | 'conditioning' | 'mobility' | 'stretch' | 'breathwork';
 
 export const TRAINING_TYPES: readonly TrainingType[] = [
   'strength',
   'conditioning',
   'mobility',
   'stretch',
+  'breathwork',
 ] as const;
 
 /** How a `conditioning` exercise covers ground or does work. Null for every other type. */
@@ -253,6 +256,7 @@ export const LOG_TYPES_BY_TRAINING_TYPE: Readonly<Record<TrainingType, readonly 
   conditioning: ['conditioning', 'endurance', 'carry'],
   mobility: ['mobility', 'isometric', 'strength'],
   stretch: ['stretch'],
+  breathwork: ['breathwork'],
 };
 
 // ============================================================================
@@ -263,8 +267,11 @@ export const LOG_TYPES_BY_TRAINING_TYPE: Readonly<Record<TrainingType, readonly 
 // an exercise. Pure and import-free (see AGENTS.md, shared rules).
 // ============================================================================
 
-/** An input box the logger's set row renders. */
-export type LoggerInput = 'reps' | 'weight' | 'time' | 'distance';
+/**
+ * An input box the logger's set row renders. `pace` is the breath actually
+ * breathed — inhale, inhale hold, exhale, exhale hold.
+ */
+export type LoggerInput = 'reps' | 'weight' | 'time' | 'distance' | 'pace';
 
 /**
  * The boxes the logger's set row renders for each log type. `time` is a hold
@@ -278,6 +285,7 @@ export const LOG_TYPE_INPUTS: Readonly<Record<DefaultLogType, readonly LoggerInp
   carry: ['weight', 'time', 'distance'],
   mobility: ['time'],
   stretch: ['time'],
+  breathwork: ['time', 'pace'],
 };
 
 /** Conditioning modalities that cover ground, so default to `endurance`. */
@@ -302,6 +310,8 @@ export interface PrescribedInputs {
   time?: boolean;
   hold?: boolean;
   distance?: boolean;
+  /** A breath prescription (`BreathPrescription`) is present. */
+  breath?: boolean;
 }
 
 /** The library classification the rule reads, when the exercise has an exact match. */
@@ -370,7 +380,7 @@ function lowerTags(tags: readonly (string | null)[] | null | undefined): Set<str
 }
 
 function anyPrescribed(p: PrescribedInputs): boolean {
-  return Boolean(p.reps || p.weight || p.time || p.hold || p.distance);
+  return Boolean(p.reps || p.weight || p.time || p.hold || p.distance || p.breath);
 }
 
 /** The log type a classified exercise gets when nothing was prescribed. */
@@ -382,6 +392,8 @@ function libraryLogType(
   switch (type) {
     case 'stretch':
       return 'stretch';
+    case 'breathwork':
+      return 'breathwork';
     case 'mobility':
       return 'mobility';
     case 'conditioning':
@@ -400,6 +412,7 @@ function neededInputs(p: PrescribedInputs): Set<LoggerInput> {
   if (p.weight) needed.add('weight');
   if (p.time || p.hold) needed.add('time');
   if (p.distance) needed.add('distance');
+  if (p.breath) needed.add('pace');
   return needed;
 }
 
@@ -442,6 +455,11 @@ function clampToTrainingType(
 
 /** The prescription-first derivation, with `tags` as the tie-break. */
 function fromPrescription(tags: ReadonlySet<string>, p: PrescribedInputs): DefaultLogType {
+  // A breath with nothing but a clock is breathwork. Reps, load or distance make
+  // it an exercise paced by the breath, which is logged as that exercise; a hold
+  // makes it a pose held for breaths, which the hold rules below decide.
+  if (p.breath && !p.reps && !p.weight && !p.distance && !p.hold) return 'breathwork';
+
   // Covering ground: loaded is a carry, unloaded is endurance.
   if (p.distance) return p.weight ? 'carry' : 'endurance';
 
