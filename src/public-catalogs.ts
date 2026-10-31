@@ -1,5 +1,6 @@
 /**
- * Public location session catalog contracts.
+ * Public session catalog contracts. A catalog is usually a location's, and then carries its
+ * location and equipment; a breathwork catalog has neither.
  */
 import type { JsonValue } from './common.js';
 
@@ -22,8 +23,10 @@ export interface LinkedSessionProvenance {
   sourceContentHash: string;
   publishedVersion: number;
   selectedSnapshotHash: string;
-  effectiveLocationId: string;
-  locationEquipmentSnapshot: JsonValue;
+  /** The catalog's location. Absent for a catalog with no location, such as breathwork. */
+  effectiveLocationId?: string;
+  /** The location's equipment when the option was published. Absent with no location. */
+  locationEquipmentSnapshot?: JsonValue;
   attribution?: PublicCatalogAttribution;
   logKind?: PublicCatalogLogKind;
   signalCompleteness?: 'session-level' | 'set-level';
@@ -46,7 +49,8 @@ export interface PublicLocationCatalogResponse {
     publicId: string;
     title: string;
     attribution?: PublicCatalogAttribution;
-    location: {
+    /** Absent for a catalog with no location, such as breathwork. */
+    location?: {
       name: string;
       type: 'personal' | 'commercial' | 'hotel' | 'outdoor';
       equipmentSummary: string[];

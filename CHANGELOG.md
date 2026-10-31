@@ -7,6 +7,13 @@ While in `0.x`, minor version bumps may include breaking changes.
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-10-31
+
+### Changed
+
+- **A public catalog can have no location.** `PublicLocationCatalogResponse.catalog.location`, `LinkedSessionProvenance.effectiveLocationId` and `LinkedSessionProvenance.locationEquipmentSnapshot` are optional, so a breathwork catalog lists and copies without a location. Location catalogs still carry all three; code that reads them needs to allow for their absence.
+- `ContractVersion` and package version bumped to `0.10.0`.
+
 ## [0.9.0] - 2026-10-30
 
 ### Added
