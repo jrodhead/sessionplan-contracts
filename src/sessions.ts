@@ -129,4 +129,18 @@ export interface BreathPrescription extends BreathCycle {
   to?: BreathCycle | null;
   /** Length as a count of breaths, in place of `timeSeconds`. */
   breaths?: number | null;
+  /** The reference drone while this item plays. Absent or null: the drone is as the person set it. */
+  drone?: BreathDrone | null;
+}
+
+/**
+ * The reference drone under a breathwork item: two tones straddling one pitch, which beat at
+ * the difference between them. `spreadHz` is that difference, the beat rate, held for the
+ * item or ramped to `toSpreadHz` over its length. 0 to 30. An item that sets one switches the
+ * drone on.
+ */
+export interface BreathDrone {
+  spreadHz: number;
+  /** The spread a ramp arrives at. Absent or null: the spread holds steady. */
+  toSpreadHz?: number | null;
 }

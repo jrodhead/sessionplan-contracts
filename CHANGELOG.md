@@ -7,6 +7,16 @@ While in `0.x`, minor version bumps may include breaking changes.
 
 ## [Unreleased]
 
+## [0.11.0] - 2026-11-02
+
+### Added
+
+- **A breathwork item can set the drone.** `BreathPrescription.drone` (`BreathDrone`) gives the reference drone's spread in hertz, the rate its two tones beat at, held or ramped to `toSpreadHz` over the item. An item that sets one switches the drone on.
+
+### Changed
+
+- `ContractVersion` and package version bumped to `0.11.0`.
+
 ## [0.10.0] - 2026-10-31
 
 ### Changed
