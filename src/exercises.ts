@@ -557,6 +557,25 @@ export interface ExerciseListParams extends PaginationParams {
 }
 
 /**
+ * What an exercise's `media` holds. The database column is free-form JSON, so this
+ * names the keys SessionPlan uses and allows any others: readers must tolerate keys
+ * they do not know, and must not assume a key is present.
+ */
+export interface ExerciseMedia {
+  /**
+   * The ID of the exercise's movement figure. Opaque here: whether a figure with
+   * this ID exists is the figures package's question, answered where it is drawn,
+   * so an ID nothing recognises simply shows no figure. Set by administrators.
+   */
+  figure?: string | null;
+  /** A video URL. Kept for existing rows; nothing shows it. */
+  video?: string | null;
+  /** Image URLs. Kept for existing rows; nothing shows them. */
+  images?: string[];
+  [key: string]: JsonValue | undefined;
+}
+
+/**
  * Platform administrators only. The request names its target — `scope: 'system'`,
  * or `scope: 'workspace'` with `workspace_id` — and is refused otherwise.
  * `training_type` is required by the API; it is optional here only so the
@@ -581,7 +600,7 @@ export interface ExerciseCreateRequest extends ExerciseTaxonomyFields {
   variations?: string[];
   prescription_hints?: Record<string, unknown>;
   joints?: Record<string, unknown>;
-  media?: Record<string, unknown>;
+  media?: ExerciseMedia;
 }
 
 export interface ExerciseUpdateRequest extends ExerciseTaxonomyFields {
@@ -600,7 +619,7 @@ export interface ExerciseUpdateRequest extends ExerciseTaxonomyFields {
   variations?: string[];
   prescription_hints?: Record<string, unknown>;
   joints?: Record<string, unknown>;
-  media?: Record<string, unknown>;
+  media?: ExerciseMedia;
 }
 
 /** Exercise with scope info for API responses. */
@@ -619,7 +638,7 @@ export interface ExerciseWithScope {
   variations: string[];
   prescription_hints: JsonValue | null;
   joints: JsonValue | null;
-  media: JsonValue | null;
+  media: ExerciseMedia | null;
   /**
    * Classification columns. Optional in this shape so the release stays additive;
    * the API returns them on every row. `training_type` is null only while the
