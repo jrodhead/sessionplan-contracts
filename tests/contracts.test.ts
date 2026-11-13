@@ -19,7 +19,7 @@ import {
   EXERCISE_TAGS,
   LOG_TYPES_BY_TRAINING_TYPE,
 } from '../src/index.js';
-import type { SameWeekSession } from '../src/index.js';
+import type { ExerciseMedia, ExerciseWithScope, SameWeekSession } from '../src/index.js';
 import packageJson from '../package.json';
 
 // A same-week session written before exercise-taxonomy-by-training-type — no
@@ -130,5 +130,22 @@ describe('@sessionplan/contracts', () => {
 
   it('ContractVersion is a semver-shaped string', () => {
     expect(ContractVersion).toMatch(/^\d+\.\d+\.\d+$/);
+  });
+});
+
+describe('exercise media', () => {
+  it('names the figure, keeps video and images, and allows keys it does not know', () => {
+    const media: ExerciseMedia = { figure: 'dumbbell_lateral_raise', video: '', images: [], somethingNew: { nested: [1, 'two'] } };
+    expect(media.figure).toBe('dumbbell_lateral_raise');
+    const none: ExerciseMedia = {};
+    expect(none.figure).toBeUndefined();
+    const row: Pick<ExerciseWithScope, 'media'> = { media: null };
+    expect(row.media).toBeNull();
+  });
+
+  it('refuses a figure that is not text', () => {
+    // @ts-expect-error a figure ID is a string
+    const bad: ExerciseMedia = { figure: 7 };
+    expect(bad).toBeDefined();
   });
 });

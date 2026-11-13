@@ -7,6 +7,17 @@ While in `0.x`, minor version bumps may include breaking changes.
 
 ## [Unreleased]
 
+## [0.12.0] - 2026-11-13
+
+### Added
+
+- **An exercise can name its movement figure.** `ExerciseMedia` types an exercise's `media`: `figure` (the ID of its movement figure), plus the existing `video` and `images`, which nothing shows. Other keys are allowed, and readers must tolerate keys they do not know. No list of valid figure IDs lives here; an ID nothing recognises shows no figure.
+
+### Changed
+
+- `ExerciseCreateRequest.media` and `ExerciseUpdateRequest.media` are `ExerciseMedia` instead of `Record<string, unknown>`, and `ExerciseWithScope.media` is `ExerciseMedia | null` instead of `JsonValue | null`. Any JSON object still fits, but code that passed non-JSON values in `media`, or read `media` as a string or array, no longer type-checks.
+- `ContractVersion` and package version bumped to `0.12.0`.
+
 ## [0.11.0] - 2026-11-02
 
 ### Added
