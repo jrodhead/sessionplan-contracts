@@ -134,13 +134,41 @@ export interface BreathPrescription extends BreathCycle {
 }
 
 /**
- * The reference drone under a breathwork item: two tones straddling one pitch, which beat at
- * the difference between them. `spreadHz` is that difference, the beat rate, held for the
- * item or ramped to `toSpreadHz` over its length. 0 to 30. An item that sets one switches the
- * drone on.
+ * One voice of the drone: a pitch, as a ratio to the drone's own pitch (the person's), and a
+ * share of one voice's level.
+ */
+export interface BreathDroneVoice {
+  /** Frequency multiple of the drone's pitch, 0.5 to 4: 1 the pitch itself, 1.5 a fifth, 2 an octave. Not semitones. */
+  ratio: number;
+  /** 0 to 1. Levels are shares: when they add up to more than 1 every voice is scaled down, so the drone is never louder than one voice. */
+  level: number;
+}
+
+/**
+ * The reference drone under a breath item: up to six voices, each sounding as a pair of tones
+ * that beat at the hertz spread between them. Everything is optional, and a part an item leaves
+ * out stays as the items before it left it; `null` is the same as leaving it out. An item that
+ * sets a drone switches it on and pairs it, and every part glides from where it is to this item's
+ * setting, starting with the item's breath, over `transitionSeconds`.
+ *
+ * Voices are matched across items by position: the second voice of one item glides to the second
+ * voice of the next. A voice the next item lacks fades out.
  */
 export interface BreathDrone {
-  spreadHz: number;
-  /** The spread a ramp arrives at. Absent or null: the spread holds steady. */
+  /** Hertz between each pair's tones, the beat rate, 0 to 100; held, or ramped to `toSpreadHz` over the item. */
+  spreadHz?: number | null;
+  /** The hertz spread a ramp arrives at. Needs `spreadHz`. */
   toSpreadHz?: number | null;
+  /** The interval between each pair's tones, 1 (none) to 2 (an octave); held or ramped to `toSpreadRatio`. */
+  spreadRatio?: number | null;
+  /** The ratio spread a ramp arrives at. Needs `spreadRatio`. */
+  toSpreadRatio?: number | null;
+  /** Stereo position of each pair's lower tone, -1 left to 1 right. */
+  lowerPan?: number | null;
+  /** Stereo position of each pair's upper tone, -1 left to 1 right. */
+  upperPan?: number | null;
+  /** One to six voices, at least one with a level above 0. */
+  voices?: BreathDroneVoice[] | null;
+  /** Seconds the drone takes to glide to this item's setting, 0 to 60. Absent: the player's default (10). */
+  transitionSeconds?: number | null;
 }
