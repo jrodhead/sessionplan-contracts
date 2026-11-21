@@ -7,6 +7,17 @@ While in `0.x`, minor version bumps may include breaking changes.
 
 ## [Unreleased]
 
+## [0.13.0] - 2026-11-21
+
+### Added
+
+- **A breath item's drone can be several voices, and glides between items.** `BreathDrone` gains `voices` (`BreathDroneVoice`: a `ratio` to the drone's pitch, 0.5–4, and a `level` share, 0–1; one to six voices), `spreadRatio` / `toSpreadRatio` (1–2), `lowerPan` / `upperPan` (−1 to 1) and `transitionSeconds` (0–60). A part an item leaves out stays as the items before it left it, and `null` means the same as leaving it out. Voices are matched across items by position.
+
+### Changed
+
+- `BreathDrone.spreadHz` is optional, so an item can change voices or pans without restating, and so overriding, the spread. Its range is 0–100 Hz (was 0–30). A drone with only a spread means what it did.
+- `ContractVersion` and package version bumped to `0.13.0`.
+
 ## [0.12.0] - 2026-11-13
 
 ### Added
